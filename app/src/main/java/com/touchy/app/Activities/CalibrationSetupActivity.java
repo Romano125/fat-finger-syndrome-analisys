@@ -91,6 +91,26 @@ public class CalibrationSetupActivity extends AppCompatActivity {
         finish();
     }
 
+    public void goToStageOne(View view) {
+        final Intent intent = new Intent(this, StageOneActivity.class);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        TextInputLayout subjectNameLayout = findViewById(R.id.subjectNameLayout);
+        String subjectName = String.valueOf(((TextInputEditText) findViewById(R.id.subjectNameText)).getText());
+
+        if (subjectName.equals("")) {
+            subjectNameLayout.setError("Name is required!");
+            return;
+        }
+
+        editor.putString("subjectName", subjectName);
+        editor.putString("subjectHandedness", selectedHandedness);
+        editor.putString("screenResolution", Common.getScreenResolution(getWindowManager().getDefaultDisplay()));
+        editor.apply();
+
+        startActivity(intent);
+        finish();
+    }
+
     private void verifyPermissions() {
         int readExternalStoragePermission = ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
         int writeExternalStoragePermission = ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
