@@ -13,7 +13,6 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.touchy.app.Activities.CalibrationSetupActivity;
-import com.touchy.app.Activities.StageTwoActivity;
 import com.touchy.app.Constants;
 
 import org.json.JSONException;
@@ -30,7 +29,7 @@ import java.util.Random;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class StageOneView extends View {
+public class StageTwoView extends View {
     private float circle_x, circle_y, realCenterOffset = 5;
     private final Random random = new Random();
     private final Paint paint = new Paint();
@@ -53,7 +52,7 @@ public class StageOneView extends View {
     private static HashMap<String, Double> touchedAreaAveragePressure = new HashMap<>();
     private SharedPreferences sharedPreferences;
 
-    public StageOneView(Context context) {
+    public StageTwoView(Context context) {
         super(context);
 
         init(null, 0);
@@ -67,7 +66,7 @@ public class StageOneView extends View {
         this.subjectHandedness = sharedPreferences.getString("subjectHandedness", "-");
     }
 
-    public StageOneView(Context context, AttributeSet attrs) {
+    public StageTwoView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(attrs, 0);
 
@@ -80,7 +79,7 @@ public class StageOneView extends View {
         this.subjectHandedness = sharedPreferences.getString("subjectHandedness", "-");
     }
 
-    public StageOneView(Context context, AttributeSet attrs, int defStyle) {
+    public StageTwoView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init(attrs, defStyle);
 
@@ -129,7 +128,7 @@ public class StageOneView extends View {
 
             saveStatistics();
 
-            Intent intent = new Intent(getContext(), StageTwoActivity.class);
+            Intent intent = new Intent(getContext(), CalibrationSetupActivity.class);
             getContext().startActivity(intent);
         }
 
@@ -205,7 +204,7 @@ public class StageOneView extends View {
             sessionData.put("target", targetData);
             sessionData.put("statistics", statisticsData);
 
-            File sessionFilePath = new File(createOutputDirectory("Touchy"),"stageOneStatistics.txt");
+            File sessionFilePath = new File(createOutputDirectory("Touchy"),"stageTwoStatistics.txt");
 
             try {
                 FileWriter out = new FileWriter(sessionFilePath, true);

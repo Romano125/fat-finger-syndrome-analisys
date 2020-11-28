@@ -10,21 +10,21 @@ import android.view.animation.AnimationUtils;
 import com.google.android.material.textview.MaterialTextView;
 import com.touchy.app.R;
 import com.touchy.app.Utils.ScreenHelper;
-import com.touchy.app.Views.StageOneView;
+import com.touchy.app.Views.StageTwoView;
 
-public class StageOneActivity extends AppCompatActivity {
+public class StageTwoActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_stage_one);
+        setContentView(R.layout.activity_stage_two);
 
         ScreenHelper.setActivityInitialLayout(this);
 
-        MaterialTextView stageOneInfo = findViewById(R.id.stageOneInfo);
+        MaterialTextView stageTwoInfo = findViewById(R.id.stageTwoInfo);
 
         Animation logoAnimation = AnimationUtils.loadAnimation(this, R.anim.translation);
-        stageOneInfo.startAnimation(logoAnimation);
+        stageTwoInfo.startAnimation(logoAnimation);
 
         logoAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -34,8 +34,8 @@ public class StageOneActivity extends AppCompatActivity {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                StageOneView stageOneView = findViewById(R.id.stageOneView);
-                stageOneView.setVisibility(View.VISIBLE);
+                StageTwoView stageTwoView = findViewById(R.id.stageTwoView);
+                stageTwoView.setVisibility(View.VISIBLE);
             }
 
             @Override

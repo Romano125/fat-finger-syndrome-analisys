@@ -25,7 +25,7 @@ public class SplashActivity extends AppCompatActivity {
         appLogoIcon = findViewById(R.id.logoIcon);
         MaterialTextView appLogoText = findViewById(R.id.appName);
 
-        Animation logoAnimation = AnimationUtils.loadAnimation(this, R.anim.activity_splash_translation);
+        Animation logoAnimation = AnimationUtils.loadAnimation(this, R.anim.translation);
         appLogoIcon.startAnimation(logoAnimation);
         appLogoText.startAnimation(logoAnimation);
 
@@ -37,7 +37,7 @@ public class SplashActivity extends AppCompatActivity {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                Animation logoAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.activity_splash_rotation);
+                Animation logoAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.pulsing);
                 appLogoIcon.startAnimation(logoAnimation);
             }
 
@@ -51,7 +51,7 @@ public class SplashActivity extends AppCompatActivity {
         Thread timer = new Thread() {
             public void run() {
                 try {
-                    sleep(7000);
+                    sleep(10000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } finally {
