@@ -30,12 +30,11 @@ import java.util.Random;
 import static android.content.Context.MODE_PRIVATE;
 
 public class CalibrationView extends View {
-    private float circle_x, circle_y;
+    private float circle_x, circle_y, realCenterOffset = 5;
     private final Random random = new Random();
     private final Paint paint = new Paint();
-    private int sessionLengthInTouches, radius;
-    private int touchCount = 0;
-    private String screenResolution = "", subjectName = "";
+    private int sessionLengthInTouches, radius, touchCount = 0;
+    private String screenResolution, subjectName, subjectHandedness;
     private static int[] colors = {
             Color.GREEN,
             Color.RED,
@@ -64,8 +63,7 @@ public class CalibrationView extends View {
         this.sessionLengthInTouches = sharedPreferences.getInt("sessionLengthInTouches", 10);
         this.screenResolution = sharedPreferences.getString("screenResolution", "-");
         this.subjectName = sharedPreferences.getString("subjectName", "-");
-        this.subjectName = sharedPreferences.getString("subjectName", "-");
-
+        this.subjectHandedness = sharedPreferences.getString("subjectHandedness", "-");
     }
 
     public CalibrationView(Context context, AttributeSet attrs) {
@@ -78,6 +76,7 @@ public class CalibrationView extends View {
         this.sessionLengthInTouches = sharedPreferences.getInt("sessionLengthInTouches", 10);
         this.screenResolution = sharedPreferences.getString("screenResolution", "-");
         this.subjectName = sharedPreferences.getString("subjectName", "-");
+        this.subjectHandedness = sharedPreferences.getString("subjectHandedness", "-");
     }
 
     public CalibrationView(Context context, AttributeSet attrs, int defStyle) {
@@ -90,6 +89,7 @@ public class CalibrationView extends View {
         this.sessionLengthInTouches = sharedPreferences.getInt("sessionLengthInTouches", 10);
         this.screenResolution = sharedPreferences.getString("screenResolution", "-");
         this.subjectName = sharedPreferences.getString("subjectName", "-");
+        this.subjectHandedness = sharedPreferences.getString("subjectHandedness", "-");
     }
 
     private void init(AttributeSet attrs, int defStyle) {
@@ -142,7 +142,7 @@ public class CalibrationView extends View {
     }
 
     private String getTouchedArea(float x_coordinate, float y_coordinate) {
-        if (Math.abs(circle_x - x_coordinate) <= 5 && Math.abs(circle_y - y_coordinate) <= 5) {
+        if (Math.abs(circle_x - x_coordinate) <= realCenterOffset && Math.abs(circle_y - y_coordinate) <= realCenterOffset) {
             System.out.println("In the middle!");
             return String.valueOf(Constants.TOUCHED_AREA.CENTER);
         }
@@ -166,7 +166,6 @@ public class CalibrationView extends View {
 
     private void saveStatistics() {
         Date date = Calendar.getInstance().getTime();
-        System.out.println("Current time => " + date);
 
         SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
         String currentDate = dateFormatter.format(date);
@@ -175,7 +174,7 @@ public class CalibrationView extends View {
 
             JSONObject subjectData = new JSONObject();
             subjectData.put("name", subjectName);
-            subjectData.put("handedness", "L");
+            subjectData.put("handedness", subjectHandedness);
             subjectData.put("screenResolution", screenResolution);
             subjectData.put("sessionLength", sessionLengthInTouches);
             subjectData.put("date", currentDate);
@@ -205,7 +204,7 @@ public class CalibrationView extends View {
             sessionData.put("target", targetData);
             sessionData.put("statistics", statisticsData);
 
-            File sessionFilePath = new File(createOutputDirectory("Touchy"),"statistics.txt");
+            File sessionFilePath = new File(createOutputDirectory("Touchy"),"calibrationStatistics.txt");
 
             try {
                 FileWriter out = new FileWriter(sessionFilePath, true);
@@ -213,7 +212,7 @@ public class CalibrationView extends View {
                 out.close();
             } catch (Exception e) {
                 e.printStackTrace();
-                Log.w("SessionWriter", "Couldn't create file to store session data.");
+                Log.w("FileWriter", "Couldn't create file to store calibration statistics data.");
             }
 
         } catch (JSONException e) {

@@ -2,7 +2,6 @@ package com.touchy.app.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import com.touchy.app.R;
@@ -16,11 +15,6 @@ public class CalibrationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_calibration);
 
         ScreenHelper.setActivityInitialLayout(this);
-
-        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("calibrationSetupPreference", MODE_PRIVATE);
-        String subjectName = sharedPreferences.getString("subjectName", "");
-
-        System.out.println(subjectName);
     }
 
     @Override

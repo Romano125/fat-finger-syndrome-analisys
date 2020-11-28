@@ -60,6 +60,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/materialTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="100dp"
@@ -70,28 +71,32 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <com.google.android.material.radiobutton.MaterialRadioButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="71dp"
-        android:layout_marginEnd="52dp"
-        android:fontFamily="@font/nunito"
-        android:text="Left"
-        app:layout_constraintEnd_toStartOf="@+id/materialCheckBox"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/subjectNameLayout" />
 
-    <com.google.android.material.radiobutton.MaterialRadioButton
-        android:id="@+id/materialCheckBox"
+    <RadioGroup
+        android:id="@+id/handednessRadioGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="72dp"
-        android:layout_marginEnd="116dp"
-        android:fontFamily="@font/nunito"
-        android:text="Right"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/calibrationButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/subjectNameLayout" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/materialTextView">
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/handednessLeft"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/nunito"
+            android:layout_marginRight="40dp"
+            android:text="Left" />
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/handednessRight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/nunito"
+            android:text="Right" />
+    </RadioGroup>
 
     <Button
         android:id="@+id/settingsButton"

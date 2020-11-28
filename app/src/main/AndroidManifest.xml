@@ -23,9 +23,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.touchy.app.Activities.CalibrationSetupActivity" >
-
-        </activity>
+        <activity android:name="com.touchy.app.Activities.CalibrationSetupActivity" />
         <activity android:name="com.touchy.app.Activities.CalibrationActivity" />
         <activity android:name="com.touchy.app.Activities.SettingsActivity" />
     </application>

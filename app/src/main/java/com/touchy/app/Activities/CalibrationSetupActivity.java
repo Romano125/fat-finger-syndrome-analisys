@@ -12,7 +12,9 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.RadioGroup;
 
+import com.google.android.material.radiobutton.MaterialRadioButton;
 import com.touchy.app.R;
 import com.touchy.app.Utils.Common;
 import com.touchy.app.Utils.ScreenHelper;
@@ -23,6 +25,7 @@ import java.util.Objects;
 
 public class CalibrationSetupActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
+    private String selectedHandedness;
 
     private static final int STORAGE_PERMISSIONS_REQUEST_CODE = 5;
     private static final String[] STORAGE_PERMISSIONS = {
@@ -39,6 +42,17 @@ public class CalibrationSetupActivity extends AppCompatActivity {
         sharedPreferences = getApplicationContext().getSharedPreferences("calibrationSetupPreference", MODE_PRIVATE);
 
         verifyPermissions();
+
+        RadioGroup radioGroup = (RadioGroup) findViewById(R.id.handednessRadioGroup);
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                MaterialRadioButton radioButton = findViewById(checkedId);
+
+                selectedHandedness = (String) radioButton.getText();
+            }
+        });
     }
 
     @Override
@@ -62,6 +76,7 @@ public class CalibrationSetupActivity extends AppCompatActivity {
         }
 
         editor.putString("subjectName", subjectName);
+        editor.putString("subjectHandedness", selectedHandedness);
         editor.putString("screenResolution", Common.getScreenResolution(getWindowManager().getDefaultDisplay()));
         editor.apply();
 
