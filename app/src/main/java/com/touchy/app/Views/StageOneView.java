@@ -6,15 +6,16 @@ import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.media.MediaPlayer;
 import android.os.Environment;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.touchy.app.Activities.CalibrationSetupActivity;
 import com.touchy.app.Activities.StageTwoActivity;
 import com.touchy.app.Constants;
+import com.touchy.app.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -52,6 +53,7 @@ public class StageOneView extends View {
     private static HashMap<String, Double> touchedAreaAverageSize = new HashMap<>();
     private static HashMap<String, Double> touchedAreaAveragePressure = new HashMap<>();
     private SharedPreferences sharedPreferences;
+    private final MediaPlayer mediaPlayer;
 
     public StageOneView(Context context) {
         super(context);
@@ -65,6 +67,8 @@ public class StageOneView extends View {
         this.screenResolution = sharedPreferences.getString("screenResolution", "-");
         this.subjectName = sharedPreferences.getString("subjectName", "-");
         this.subjectHandedness = sharedPreferences.getString("subjectHandedness", "-");
+
+        mediaPlayer = MediaPlayer.create(context, R.raw.success_hit);
     }
 
     public StageOneView(Context context, AttributeSet attrs) {
@@ -78,6 +82,8 @@ public class StageOneView extends View {
         this.screenResolution = sharedPreferences.getString("screenResolution", "-");
         this.subjectName = sharedPreferences.getString("subjectName", "-");
         this.subjectHandedness = sharedPreferences.getString("subjectHandedness", "-");
+
+        mediaPlayer = MediaPlayer.create(context, R.raw.success_hit);
     }
 
     public StageOneView(Context context, AttributeSet attrs, int defStyle) {
@@ -91,6 +97,8 @@ public class StageOneView extends View {
         this.screenResolution = sharedPreferences.getString("screenResolution", "-");
         this.subjectName = sharedPreferences.getString("subjectName", "-");
         this.subjectHandedness = sharedPreferences.getString("subjectHandedness", "-");
+
+        mediaPlayer = MediaPlayer.create(context, R.raw.success_hit);
     }
 
     private void init(AttributeSet attrs, int defStyle) {
@@ -145,6 +153,9 @@ public class StageOneView extends View {
     private String getTouchedArea(float x_coordinate, float y_coordinate) {
         if (Math.abs(circle_x - x_coordinate) <= realCenterOffset && Math.abs(circle_y - y_coordinate) <= realCenterOffset) {
             System.out.println("In the middle!");
+            if (mediaPlayer != null) {
+                mediaPlayer.start();
+            }
             return String.valueOf(Constants.TOUCHED_AREA.CENTER);
         }
 
