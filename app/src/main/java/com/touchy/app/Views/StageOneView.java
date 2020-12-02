@@ -7,25 +7,38 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Environment;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import androidx.annotation.RequiresApi;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
 import com.touchy.app.Activities.StageTwoActivity;
 import com.touchy.app.Constants;
+import com.touchy.app.Models.StatisticsData;
+import com.touchy.app.Models.Target;
+import com.touchy.app.Models.TestSubject;
 import com.touchy.app.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
@@ -54,6 +67,7 @@ public class StageOneView extends View {
     private static HashMap<String, Double> touchedAreaAveragePressure = new HashMap<>();
     private SharedPreferences sharedPreferences;
     private final MediaPlayer mediaPlayer;
+    private List<StatisticsData> lastCalibrationStatistcsData = null;
 
     public StageOneView(Context context) {
         super(context);
@@ -69,6 +83,7 @@ public class StageOneView extends View {
         this.subjectHandedness = sharedPreferences.getString("subjectHandedness", "-");
 
         mediaPlayer = MediaPlayer.create(context, R.raw.success_hit);
+        lastCalibrationStatistcsData = getLastCalibrationData();
     }
 
     public StageOneView(Context context, AttributeSet attrs) {
@@ -84,6 +99,7 @@ public class StageOneView extends View {
         this.subjectHandedness = sharedPreferences.getString("subjectHandedness", "-");
 
         mediaPlayer = MediaPlayer.create(context, R.raw.success_hit);
+        lastCalibrationStatistcsData = getLastCalibrationData();
     }
 
     public StageOneView(Context context, AttributeSet attrs, int defStyle) {
@@ -99,6 +115,7 @@ public class StageOneView extends View {
         this.subjectHandedness = sharedPreferences.getString("subjectHandedness", "-");
 
         mediaPlayer = MediaPlayer.create(context, R.raw.success_hit);
+        lastCalibrationStatistcsData = getLastCalibrationData();
     }
 
     private void init(AttributeSet attrs, int defStyle) {
@@ -114,12 +131,26 @@ public class StageOneView extends View {
         canvas.drawCircle(circle_x, circle_y, radius, paint);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         String touchedArea = getTouchedArea(event.getX(), event.getY());
         double touchError = getTouchError(event.getX(), event.getY());
         double touchSize = event.getSize();
         double touchPressure = event.getPressure();
+
+        StatisticsData stats = lastCalibrationStatistcsData.stream()
+                .filter(data -> touchedArea.equals(String.valueOf(data.getTouchedArea())))
+                .findAny()
+                .orElse(null);
+
+        System.out.println("Calibration average error: " + stats.getAverageError());
+        System.out.println("Current touch error: " + touchError);
+
+        if (touchError <= stats.getAverageError()) {
+            MotionEvent motionEvent = MotionEvent.obtain(10,10, MotionEvent.ACTION_DOWN, circle_x, circle_y, 0);
+//            onTouchEvent(motionEvent);
+        }
 
         touchedAreas.put(touchedArea, touchedAreas.containsKey(touchedArea) ? touchedAreas.get(touchedArea) + 1 : 1);
         touchedAreaAverageError.put(touchedArea, touchedAreaAverageError.containsKey(touchedArea) ?
@@ -132,13 +163,15 @@ public class StageOneView extends View {
                 (touchedAreaAveragePressure.get(touchedArea) + touchPressure ) / touchedAreas.get(touchedArea)
                 : touchPressure);
 
-        if (touchCount++ == sessionLengthInTouches) {
-            System.out.println("Saving statistics");
+        if (touchedArea.equals(String.valueOf(Constants.TOUCHED_AREA.CENTER))) {
+            if (touchCount++ == sessionLengthInTouches) {
+                System.out.println("Saving statistics");
 
-            saveStatistics();
+                saveStatistics();
 
-            Intent intent = new Intent(getContext(), StageTwoActivity.class);
-            getContext().startActivity(intent);
+                Intent intent = new Intent(getContext(), StageTwoActivity.class);
+                getContext().startActivity(intent);
+            }
         }
 
         redrawCircle();
@@ -151,7 +184,7 @@ public class StageOneView extends View {
     }
 
     private String getTouchedArea(float x_coordinate, float y_coordinate) {
-        if (Math.abs(circle_x - x_coordinate) <= realCenterOffset && Math.abs(circle_y - y_coordinate) <= realCenterOffset) {
+        if (Math.abs(circle_x - x_coordinate) <= radius / 2f && Math.abs(circle_y - y_coordinate) <= radius / 2f) {
             System.out.println("In the middle!");
             if (mediaPlayer != null) {
                 mediaPlayer.start();
@@ -182,54 +215,86 @@ public class StageOneView extends View {
         SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
         String currentDate = dateFormatter.format(date);
 
-        try {
+        Gson gson = new Gson();
 
-            JSONObject subjectData = new JSONObject();
-            subjectData.put("name", subjectName);
-            subjectData.put("handedness", subjectHandedness);
-            subjectData.put("screenResolution", screenResolution);
-            subjectData.put("sessionLength", sessionLengthInTouches);
-            subjectData.put("date", currentDate);
+        File sessionFilePath = new File(createOutputDirectory("Touchy"),"stageOneStatistics.txt");
+
+        List<JSONObject> statistics = new ArrayList<>();
+        if (sessionFilePath.length() > 0) {
+            try {
+                statistics = gson.fromJson(new JsonReader(new FileReader(sessionFilePath)), new TypeToken<List<JSONObject>>() {}.getType());
+
+                // reading data from file
+                String json = gson.toJson(statistics.get(0).get("subject"));
+
+                TestSubject testSubject = gson.fromJson(json, new TypeToken<TestSubject>() {}.getType());
+
+                System.out.println(testSubject.getName());
+            } catch (FileNotFoundException | JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        try {
+            TestSubject testSubject = new TestSubject(subjectName, subjectHandedness, screenResolution, currentDate, sessionLengthInTouches);
 //            subjectData.put("highestPrecisionArea", currentDate);
 
-            JSONObject targetData = new JSONObject();
-            targetData.put("radius", radius);
+            Target target = new Target(radius);
 
-            JSONObject statisticsData = new JSONObject();
+            List<StatisticsData> statisticsDataList = new ArrayList<>();
             for (Constants.TOUCHED_AREA touchedArea : Constants.TOUCHED_AREA.values()) {
                 int touches = touchedAreas.get(String.valueOf(touchedArea)) == null ? 0 : touchedAreas.get(String.valueOf(touchedArea));
                 double averageError = touchedAreaAverageError.get(String.valueOf(touchedArea)) == null ? 0 : touchedAreaAverageError.get(String.valueOf(touchedArea));
                 double averageSize = touchedAreaAverageSize.get(String.valueOf(touchedArea)) == null ? 0 : touchedAreaAverageSize.get(String.valueOf(touchedArea));
                 double averagePressure = touchedAreaAveragePressure.get(String.valueOf(touchedArea)) == null ? 0 : touchedAreaAveragePressure.get(String.valueOf(touchedArea));
 
-                JSONObject touchedAreaData = new JSONObject();
-                touchedAreaData.put("touches", touches);
-                touchedAreaData.put("averageError", averageError);
-                touchedAreaData.put("averageSize", averageSize);
-                touchedAreaData.put("averagePressure", averagePressure);
-
-                statisticsData.put(String.valueOf(touchedArea), touchedAreaData);
+                StatisticsData statisticsData = new StatisticsData(String.valueOf(touchedArea), touches, averageError, averageSize, averagePressure);
+                statisticsDataList.add(statisticsData);
             }
 
             JSONObject sessionData = new JSONObject();
-            sessionData.put("subject", subjectData);
-            sessionData.put("target", targetData);
-            sessionData.put("statistics", statisticsData);
+            sessionData.put("subject", testSubject);
+            sessionData.put("target", target);
+            sessionData.put("statistics", statisticsDataList);
 
-            File sessionFilePath = new File(createOutputDirectory("Touchy"),"stageOneStatistics.txt");
+            statistics.add(sessionData);
+
+            String json = gson.toJson(statistics);
 
             try {
-                FileWriter out = new FileWriter(sessionFilePath, true);
-                out.write(sessionData.toString());
+                FileWriter out = new FileWriter(sessionFilePath);
+                out.write(json);
                 out.close();
             } catch (Exception e) {
                 e.printStackTrace();
-                Log.w("FileWriter", "Couldn't create file to store stage one statistics data.");
+                Log.w("FileWriter", "Couldn't create file to store calibration statistics data.");
             }
-
-        } catch (JSONException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private List<StatisticsData> getLastCalibrationData() {
+        Gson gson = new Gson();
+
+        File sessionFilePath = new File(createOutputDirectory("Touchy"),"calibrationStatistics.txt");
+
+        List<JSONObject> statistics;
+        List<StatisticsData> statisticsData = null;
+        if (sessionFilePath.length() > 0) {
+            try {
+                statistics = gson.fromJson(new JsonReader(new FileReader(sessionFilePath)), new TypeToken<List<JSONObject>>() {}.getType());
+
+                // reading data from file
+                String json = gson.toJson(statistics.get(0).get("statistics"));
+
+                statisticsData = gson.fromJson(json, new TypeToken<List<StatisticsData>>() {}.getType());
+            } catch (FileNotFoundException | JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return statisticsData;
     }
 
     private File createOutputDirectory(String directoryName) {

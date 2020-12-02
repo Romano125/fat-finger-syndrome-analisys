@@ -12,18 +12,34 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
 import com.touchy.app.Activities.CalibrationSetupActivity;
 import com.touchy.app.Constants;
+import com.touchy.app.Models.StatisticsData;
+import com.touchy.app.Models.Target;
+import com.touchy.app.Models.TestSubject;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
@@ -170,52 +186,61 @@ public class CalibrationView extends View {
         SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
         String currentDate = dateFormatter.format(date);
 
-        try {
+        Gson gson = new Gson();
 
-            JSONObject subjectData = new JSONObject();
-            subjectData.put("name", subjectName);
-            subjectData.put("handedness", subjectHandedness);
-            subjectData.put("screenResolution", screenResolution);
-            subjectData.put("sessionLength", sessionLengthInTouches);
-            subjectData.put("date", currentDate);
+        File sessionFilePath = new File(createOutputDirectory("Touchy"),"calibrationStatistics.txt");
+
+        List<JSONObject> statistics = new ArrayList<>();
+        if (sessionFilePath.length() > 0) {
+            try {
+                statistics = gson.fromJson(new JsonReader(new FileReader(sessionFilePath)), new TypeToken<List<JSONObject>>() {}.getType());
+
+                // reading data from file
+                String json = gson.toJson(statistics.get(0).get("subject"));
+
+                TestSubject testSubject = gson.fromJson(json, new TypeToken<TestSubject>() {}.getType());
+
+                System.out.println(testSubject.getName());
+            } catch (FileNotFoundException | JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        try {
+            TestSubject testSubject = new TestSubject(subjectName, subjectHandedness, screenResolution, currentDate, sessionLengthInTouches);
 //            subjectData.put("highestPrecisionArea", currentDate);
 
-            JSONObject targetData = new JSONObject();
-            targetData.put("radius", radius);
+            Target target = new Target(radius);
 
-            JSONObject statisticsData = new JSONObject();
+            List<StatisticsData> statisticsDataList = new ArrayList<>();
             for (Constants.TOUCHED_AREA touchedArea : Constants.TOUCHED_AREA.values()) {
                 int touches = touchedAreas.get(String.valueOf(touchedArea)) == null ? 0 : touchedAreas.get(String.valueOf(touchedArea));
                 double averageError = touchedAreaAverageError.get(String.valueOf(touchedArea)) == null ? 0 : touchedAreaAverageError.get(String.valueOf(touchedArea));
                 double averageSize = touchedAreaAverageSize.get(String.valueOf(touchedArea)) == null ? 0 : touchedAreaAverageSize.get(String.valueOf(touchedArea));
                 double averagePressure = touchedAreaAveragePressure.get(String.valueOf(touchedArea)) == null ? 0 : touchedAreaAveragePressure.get(String.valueOf(touchedArea));
 
-                JSONObject touchedAreaData = new JSONObject();
-                touchedAreaData.put("touches", touches);
-                touchedAreaData.put("averageError", averageError);
-                touchedAreaData.put("averageSize", averageSize);
-                touchedAreaData.put("averagePressure", averagePressure);
-
-                statisticsData.put(String.valueOf(touchedArea), touchedAreaData);
+                StatisticsData statisticsData = new StatisticsData(String.valueOf(touchedArea), touches, averageError, averageSize, averagePressure);
+                statisticsDataList.add(statisticsData);
             }
 
             JSONObject sessionData = new JSONObject();
-            sessionData.put("subject", subjectData);
-            sessionData.put("target", targetData);
-            sessionData.put("statistics", statisticsData);
+            sessionData.put("subject", testSubject);
+            sessionData.put("target", target);
+            sessionData.put("statistics", statisticsDataList);
 
-            File sessionFilePath = new File(createOutputDirectory("Touchy"),"calibrationStatistics.txt");
+            statistics.add(sessionData);
+
+            String json = gson.toJson(statistics);
 
             try {
-                FileWriter out = new FileWriter(sessionFilePath, true);
-                out.write(sessionData.toString());
+                FileWriter out = new FileWriter(sessionFilePath);
+                out.write(json);
                 out.close();
             } catch (Exception e) {
                 e.printStackTrace();
                 Log.w("FileWriter", "Couldn't create file to store calibration statistics data.");
             }
-
-        } catch (JSONException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
