@@ -1,18 +1,18 @@
 package com.touchy.app.Activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.material.textview.MaterialTextView;
 import com.touchy.app.R;
 import com.touchy.app.Utils.ScreenHelper;
-import com.touchy.app.Views.StageTwoView;
 
 public class StageTwoActivity extends AppCompatActivity {
+    private final int CODE_LENGTH = 15;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,8 +34,12 @@ public class StageTwoActivity extends AppCompatActivity {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                StageTwoView stageTwoView = findViewById(R.id.stageTwoView);
-                stageTwoView.setVisibility(View.VISIBLE);
+                MaterialTextView codePattern = findViewById(R.id.pattern);
+
+                findViewById(R.id.stageTwoInstructionsText).setVisibility(View.VISIBLE);
+                codePattern.setText(randomStringGenerator(CODE_LENGTH));
+                codePattern.setVisibility(View.VISIBLE);
+                findViewById(R.id.stageTwoView).setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -43,6 +47,18 @@ public class StageTwoActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private String randomStringGenerator(int codeLength) {
+        Character[] arr = new Character[] {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
+
+        StringBuilder code = new StringBuilder();
+        while (codeLength > 0) {
+            code.append(arr[(int) (Math.random() * 10)]);
+            codeLength--;
+        }
+
+        return code.toString();
     }
 
     @Override

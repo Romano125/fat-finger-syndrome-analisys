@@ -12,4 +12,24 @@ public class StatisticsData {
         this.averageSize = averageSize;
         this.averagePressure = averagePressure;
     }
+
+    public String getTouchedArea() {
+        return touchedArea;
+    }
+
+    public int getNumberOfTouches() {
+        return numberOfTouches;
+    }
+
+    public double getAverageError() {
+        return averageError;
+    }
+
+    public double getAverageSize() {
+        return averageSize;
+    }
+
+    public double getAveragePressure() {
+        return averagePressure;
+    }
 }
