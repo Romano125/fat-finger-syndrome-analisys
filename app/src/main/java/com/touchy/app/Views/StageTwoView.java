@@ -1,23 +1,18 @@
 package com.touchy.app.Views;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.Intent;
 import android.text.Editable;
 import android.util.AttributeSet;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.annotation.IdRes;
-import androidx.constraintlayout.motion.widget.MotionInterpolator;
 
 import com.google.android.material.textview.MaterialTextView;
 import com.touchy.app.Activities.CalibrationSetupActivity;
-import com.touchy.app.Activities.StageTwoActivity;
 import com.touchy.app.R;
 
 public class StageTwoView extends FrameLayout implements View.OnClickListener {

@@ -38,19 +38,16 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="220dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="95dp"
-        android:layout_marginTop="120dp"
-        android:layout_marginEnd="96dp"
-        android:layout_marginBottom="124dp"
+        android:layout_marginTop="80dp"
         android:fontFamily="@font/nunito"
         android:hint="Name"
         app:errorEnabled="true"
-        app:layout_constraintBottom_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appName"
-        app:layout_constraintVertical_bias="0.062">
+        app:layout_constraintVertical_bias="0.038">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/subjectNameText"
@@ -58,6 +55,7 @@
             android:layout_height="59dp" />
 
     </com.google.android.material.textfield.TextInputLayout>
+
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/materialTextView"
@@ -69,8 +67,9 @@
         app:layout_constraintBottom_toTopOf="@+id/calibrationButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent" />
-
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/subjectNameLayout"
+        app:layout_constraintVertical_bias="1.0" />
 
     <RadioGroup
         android:id="@+id/handednessRadioGroup"
@@ -118,9 +117,12 @@
         android:layout_marginTop="156dp"
         android:onClick="startCalibration"
         android:text="Calibration"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.485"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/subjectNameLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/subjectNameLayout"
+        app:layout_constraintVertical_bias="0.107" />
 
     <Button
         android:id="@+id/startButton"
