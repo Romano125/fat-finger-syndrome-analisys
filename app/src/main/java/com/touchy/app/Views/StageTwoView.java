@@ -18,6 +18,7 @@ import com.touchy.app.R;
 public class StageTwoView extends FrameLayout implements View.OnClickListener {
     private EditText mPasswordField;
     private MaterialTextView materialTextView;
+    private long startTime = System.currentTimeMillis();
 
     public StageTwoView(Context context) {
         super(context);
@@ -67,6 +68,7 @@ public class StageTwoView extends FrameLayout implements View.OnClickListener {
 
             return;
         }
+
         switch (v.getId()) {
             case R.id.t9_key_clear: { // handle clear button
                 mPasswordField.setText(null);
@@ -86,6 +88,8 @@ public class StageTwoView extends FrameLayout implements View.OnClickListener {
 
     private void checkIfPhraseIsCorrect() {
         if (materialTextView.getText().equals(getInputText())) {
+            System.out.println("Total time: " + (System.currentTimeMillis() - startTime));
+
             Intent intent = new Intent(getContext(), CalibrationSetupActivity.class);
             getContext().startActivity(intent);
         }

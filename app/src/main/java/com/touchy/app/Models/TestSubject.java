@@ -3,6 +3,7 @@ package com.touchy.app.Models;
 public class TestSubject {
     private String name, handedness, screenResolution, date;
     private int sessionLengthInTouches;
+    private long timeSpent;
 
     public TestSubject(String name, String handedness, String screenResolution, String date, int sessionLengthInTouches) {
         this.name = name;
@@ -30,5 +31,9 @@ public class TestSubject {
 
     public int getSessionLengthInTouches() {
         return sessionLengthInTouches;
+    }
+
+    public void setTimeSpent(long timeSpent) {
+        this.timeSpent = timeSpent;
     }
 }

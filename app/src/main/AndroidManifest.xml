@@ -17,13 +17,15 @@
         <activity
             android:name=".Activities.SplashActivity"
             tools:ignore="InnerclassSeparator,LockedOrientationActivity">
+        </activity>
+        <activity android:name=".Activities.CalibrationSetupActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
-        <activity android:name=".Activities.CalibrationSetupActivity" />
         <activity android:name=".Activities.CalibrationActivity" />
         <activity android:name=".Activities.StageOneActivity" />
         <activity android:name=".Activities.StageTwoActivity" />

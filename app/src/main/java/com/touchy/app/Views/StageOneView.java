@@ -46,6 +46,7 @@ public class StageOneView extends View {
     private final Paint paint = new Paint();
     private int sessionLengthInTouches, radius, touchCount = 0;
     private String screenResolution, subjectName, subjectHandedness;
+    private long startTime = System.currentTimeMillis();
 
     private static HashMap<String, Integer> touchedAreas = new HashMap<>();
     private static HashMap<String, Double> touchedAreaAverageError = new HashMap<>();
@@ -170,6 +171,8 @@ public class StageOneView extends View {
                 statisticsData.setTouchedAreaAverageError(touchedAreaAverageError);
                 statisticsData.setTouchedAreaAverageSize(touchedAreaAverageSize);
                 statisticsData.setTouchedAreaAverageSize(touchedAreaAveragePressure);
+
+                testSubject.setTimeSpent(System.currentTimeMillis() - startTime);
 
                 Common.saveStatistics(Constants.STAGE_ONE_LOG_FILENAME, testSubject, target, statisticsData);
 
