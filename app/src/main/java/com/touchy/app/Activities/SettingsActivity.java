@@ -18,6 +18,8 @@ import java.util.Objects;
 
 public class SettingsActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
+    private TextInputEditText targetRadiusText, sessionLengthText;
+    private final int minimumRadius = 5, maximumRadius = 100, minimumSessionLength = 15, maximumSessionLength = 999;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,20 +33,69 @@ public class SettingsActivity extends AppCompatActivity {
         int targetRadius = sharedPreferences.getInt("targetRadius", 50);
         int sessionLengthInTouches = sharedPreferences.getInt("sessionLengthInTouches", 10);
 
-        ((TextInputEditText) findViewById(R.id.sessionLengthText)).setText(String.valueOf(sessionLengthInTouches));
-        ((TextInputEditText) findViewById(R.id.targetRadiusText)).setText(String.valueOf(targetRadius));
+        targetRadiusText = findViewById(R.id.targetRadiusText);
+        sessionLengthText = findViewById(R.id.sessionLengthText);
+
+        targetRadiusText.setText(String.valueOf(targetRadius));
+        sessionLengthText.setText(String.valueOf(sessionLengthInTouches));
     }
 
     public void saveSettings(View view) {
-        final Intent intent = new Intent(this, CalibrationSetupActivity.class);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        int sessionLengthInTouches = Integer.parseInt(String.valueOf(((TextInputEditText) findViewById(R.id.sessionLengthText)).getText())) ;
-        int targetRadius = Integer.parseInt(String.valueOf(((TextInputEditText) findViewById(R.id.targetRadiusText)).getText()));
+        final Intent intent = new Intent(this, CalibrationSetupActivity.class);
+        int targetRadius = Integer.parseInt(String.valueOf(targetRadiusText.getText()));
+        int sessionLengthInTouches = Integer.parseInt(String.valueOf(sessionLengthText.getText()));
 
         editor.putInt("targetRadius", targetRadius);
         editor.putInt("sessionLengthInTouches", sessionLengthInTouches);
         editor.apply();
 
+        startActivity(intent);
+        finish();
+    }
+
+    public void decreaseTargetRadius(View view) {
+        int targetRadius = Integer.parseInt(String.valueOf(targetRadiusText.getText()));
+
+        if (targetRadius <= minimumRadius) {
+            return;
+        }
+
+        targetRadiusText.setText(String.valueOf(targetRadius - 1));
+    }
+
+    public void increaseTargetRadius(View view) {
+        int targetRadius = Integer.parseInt(String.valueOf(targetRadiusText.getText()));
+
+        if (targetRadius >= maximumRadius) {
+            return;
+        }
+
+        targetRadiusText.setText(String.valueOf(targetRadius + 1));
+    }
+
+    public void decreaseSessionLength(View view) {
+        int sessionLength = Integer.parseInt(String.valueOf(sessionLengthText.getText()));
+
+        if (sessionLength <= minimumSessionLength) {
+            return;
+        }
+
+        sessionLengthText.setText(String.valueOf(sessionLength - 1));
+    }
+
+    public void increaseSessionLength(View view) {
+        int sessionLength = Integer.parseInt(String.valueOf(sessionLengthText.getText()));
+
+        if (sessionLength >= maximumSessionLength) {
+            return;
+        }
+
+        sessionLengthText.setText(String.valueOf(sessionLength + 1));
+    }
+
+    public void navigateBack(View view) {
+        Intent intent = new Intent(SettingsActivity.this, CalibrationSetupActivity.class);
         startActivity(intent);
         finish();
     }
