@@ -47,6 +47,7 @@ public class StageOneView extends View {
     private int sessionLengthInTouches, radius, touchCount = 1;
     private String screenResolution, subjectName, subjectHandedness;
     private long startTime = System.currentTimeMillis();
+    private boolean isHelpEnabled;
 
     private static HashMap<String, Integer> touchedAreas = new HashMap<>();
     private static HashMap<String, Double> touchedAreaAverageError = new HashMap<>();
@@ -66,6 +67,7 @@ public class StageOneView extends View {
         this.screenResolution = sharedPreferences.getString("screenResolution", "-");
         this.subjectName = sharedPreferences.getString("subjectName", "-");
         this.subjectHandedness = sharedPreferences.getString("subjectHandedness", "-");
+        this.isHelpEnabled = sharedPreferences.getBoolean("helpEnabled", false);
 
         mediaPlayer = MediaPlayer.create(context, R.raw.success_hit);
         lastCalibrationStatisticsData = getLastCalibrationData();
@@ -84,6 +86,7 @@ public class StageOneView extends View {
         this.screenResolution = sharedPreferences.getString("screenResolution", "-");
         this.subjectName = sharedPreferences.getString("subjectName", "-");
         this.subjectHandedness = sharedPreferences.getString("subjectHandedness", "-");
+        this.isHelpEnabled = sharedPreferences.getBoolean("helpEnabled", false);
 
         mediaPlayer = MediaPlayer.create(context, R.raw.success_hit);
         lastCalibrationStatisticsData = getLastCalibrationData();
@@ -102,6 +105,7 @@ public class StageOneView extends View {
         this.screenResolution = sharedPreferences.getString("screenResolution", "-");
         this.subjectName = sharedPreferences.getString("subjectName", "-");
         this.subjectHandedness = sharedPreferences.getString("subjectHandedness", "-");
+        this.isHelpEnabled = sharedPreferences.getBoolean("helpEnabled", false);
 
         mediaPlayer = MediaPlayer.create(context, R.raw.success_hit);
         lastCalibrationStatisticsData = getLastCalibrationData();
@@ -145,7 +149,7 @@ public class StageOneView extends View {
         System.out.println("Calibration average error: " + stats.getAverageError());
         System.out.println("Current touch error: " + touchError);
 
-        if (touchError <= stats.getAverageError()) {
+        if (touchError <= stats.getAverageError() && isHelpEnabled) {
             touchError = 0;
 //            move item to (x, y) coordinates to simulate user help
 //            MotionEvent motionEvent = MotionEvent.obtain(10,10, MotionEvent.ACTION_DOWN, circle_x, circle_y, 0);
@@ -163,7 +167,7 @@ public class StageOneView extends View {
                 (touchedAreaAveragePressure.get(touchedArea) + touchPressure ) / touchedAreas.get(touchedArea)
                 : touchPressure);
 
-        if (touchedArea.equals(String.valueOf(Constants.TOUCHED_AREA.CENTER)) || touchError <= stats.getAverageError()) {
+        if (touchedArea.equals(String.valueOf(Constants.TOUCHED_AREA.CENTER)) || (touchError <= stats.getAverageError() && isHelpEnabled)) {
             if (touchCount++ == sessionLengthInTouches) {
                 System.out.println("Saving statistics...");
 

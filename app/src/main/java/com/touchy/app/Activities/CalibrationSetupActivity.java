@@ -44,14 +44,10 @@ public class CalibrationSetupActivity extends AppCompatActivity {
         verifyPermissions();
 
         RadioGroup radioGroup = (RadioGroup) findViewById(R.id.handednessRadioGroup);
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
-        {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                MaterialRadioButton radioButton = findViewById(checkedId);
+        radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            MaterialRadioButton radioButton = findViewById(checkedId);
 
-                selectedHandedness = (String) radioButton.getText();
-            }
+            selectedHandedness = (String) radioButton.getText();
         });
     }
 

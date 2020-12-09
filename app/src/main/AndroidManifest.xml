@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.touchy.app">
+
     <!-- EXTERNAL STORAGE PERMISSIONS -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -17,15 +18,13 @@
         <activity
             android:name=".Activities.SplashActivity"
             tools:ignore="InnerclassSeparator,LockedOrientationActivity">
-        </activity>
-        <activity android:name=".Activities.CalibrationSetupActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
+        <activity android:name=".Activities.CalibrationSetupActivity" />
         <activity android:name=".Activities.CalibrationActivity" />
         <activity android:name=".Activities.StageOneActivity" />
         <activity android:name=".Activities.StageTwoActivity" />

@@ -9,7 +9,9 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.RadioGroup;
 
+import com.google.android.material.radiobutton.MaterialRadioButton;
 import com.touchy.app.R;
 import com.touchy.app.Utils.ScreenHelper;
 import com.google.android.material.textfield.TextInputEditText;
@@ -19,7 +21,7 @@ import java.util.Objects;
 public class SettingsActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
     private TextInputEditText targetRadiusText, sessionLengthText;
-    private final int minimumRadius = 5, maximumRadius = 100, minimumSessionLength = 15, maximumSessionLength = 999;
+    private String selectedHelpOption;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +31,18 @@ public class SettingsActivity extends AppCompatActivity {
         ScreenHelper.setActivityInitialLayout(this);
 
         sharedPreferences = getApplicationContext().getSharedPreferences("calibrationSetupPreference", MODE_PRIVATE);
+
+        boolean isHelpEnabled = sharedPreferences.getBoolean("helpEnabled", false);
+
+        RadioGroup radioGroup = (RadioGroup) findViewById(R.id.helpRadioGroup);
+
+        radioGroup.check(isHelpEnabled ? R.id.helpPositive : R.id.helpNegative);
+
+        radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            MaterialRadioButton radioButton = findViewById(checkedId);
+
+            selectedHelpOption = (String) radioButton.getText();
+        });
 
         int targetRadius = sharedPreferences.getInt("targetRadius", 50);
         int sessionLengthInTouches = sharedPreferences.getInt("sessionLengthInTouches", 10);
@@ -48,6 +62,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         editor.putInt("targetRadius", targetRadius);
         editor.putInt("sessionLengthInTouches", sessionLengthInTouches);
+        editor.putBoolean("helpEnabled", selectedHelpOption.equals("Yes"));
         editor.apply();
 
         startActivity(intent);
@@ -57,6 +72,7 @@ public class SettingsActivity extends AppCompatActivity {
     public void decreaseTargetRadius(View view) {
         int targetRadius = Integer.parseInt(String.valueOf(targetRadiusText.getText()));
 
+        int minimumRadius = 5;
         if (targetRadius <= minimumRadius) {
             return;
         }
@@ -67,6 +83,7 @@ public class SettingsActivity extends AppCompatActivity {
     public void increaseTargetRadius(View view) {
         int targetRadius = Integer.parseInt(String.valueOf(targetRadiusText.getText()));
 
+        int maximumRadius = 100;
         if (targetRadius >= maximumRadius) {
             return;
         }
@@ -77,6 +94,7 @@ public class SettingsActivity extends AppCompatActivity {
     public void decreaseSessionLength(View view) {
         int sessionLength = Integer.parseInt(String.valueOf(sessionLengthText.getText()));
 
+        int minimumSessionLength = 15;
         if (sessionLength <= minimumSessionLength) {
             return;
         }
@@ -87,6 +105,7 @@ public class SettingsActivity extends AppCompatActivity {
     public void increaseSessionLength(View view) {
         int sessionLength = Integer.parseInt(String.valueOf(sessionLengthText.getText()));
 
+        int maximumSessionLength = 999;
         if (sessionLength >= maximumSessionLength) {
             return;
         }
