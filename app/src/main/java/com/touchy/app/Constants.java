@@ -16,14 +16,19 @@ public class Constants {
     public static String STAGE_TWO_LOG_FILENAME = "stageTwoData";
 
     public static int[] TARGET_COLORS = {
-            Color.GREEN,
-            Color.RED,
-            Color.parseColor("#9900ff"),
-            Color.CYAN,
-            Color.BLACK,
-            Color.parseColor("#00FF7F"),
-            Color.BLUE,
-            Color.parseColor("#7FFF00"),
+            Color.parseColor("#6A66A3"),
+            Color.parseColor("#C04ABC"),
+            Color.parseColor("#53A038"),
+            Color.parseColor("#C8AD55"),
+            Color.parseColor("#1D2F6F"),
+            Color.parseColor("#EE7674"),
+            Color.parseColor("#FF6663"),
+            Color.parseColor("#211C24"),
+            Color.parseColor("#5E2BFF"),
+            Color.parseColor("#6A041D"),
+            Color.parseColor("#F5B841"),
+            Color.parseColor("#691213"),
+            Color.parseColor("#D4B82B"),
     };
 
     public static String APP_BACKGROUND_COLOR = "#E4E0E0";
