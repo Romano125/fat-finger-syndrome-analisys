@@ -5,18 +5,19 @@ import android.content.Intent;
 import android.text.Editable;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.annotation.IdRes;
 
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textview.MaterialTextView;
 import com.touchy.app.Activities.MainMenuActivity;
+import com.touchy.app.Models.Target;
 import com.touchy.app.R;
 
 public class StageTwoView extends FrameLayout implements View.OnClickListener {
-    private EditText mPasswordField;
+    private TextInputEditText mPasswordField;
     private MaterialTextView materialTextView;
     private long startTime = System.currentTimeMillis();
 
@@ -58,11 +59,27 @@ public class StageTwoView extends FrameLayout implements View.OnClickListener {
         $(R.id.t9_key_backspace).setOnClickListener(this);
     }
 
+
+
     @Override
     public void onClick(View v) {
         // handle number button click
         if (v.getTag() != null && "number_button".equals(v.getTag())) {
             mPasswordField.append(((TextView) v).getText());
+
+            float density = getResources().getDisplayMetrics().density;
+            int radius = (int)(v.getWidth() / density);
+
+            int [] location = new int[2];
+            v.getLocationOnScreen(location);
+            int x = location[0];
+            int y = location[1];
+
+            Target target = new Target(x, y, radius);
+
+            System.out.println(radius);
+            System.out.println(x);
+            System.out.println(y);
 
             checkIfPhraseIsCorrect();
 

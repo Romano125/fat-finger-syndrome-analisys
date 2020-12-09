@@ -41,6 +41,7 @@ public class StageTwoActivity extends AppCompatActivity {
                 codePattern.setText(randomStringGenerator(CODE_LENGTH));
                 codePattern.setVisibility(View.VISIBLE);
                 findViewById(R.id.stageTwoView).setVisibility(View.VISIBLE);
+                stageTwoInfo.setVisibility(View.GONE);
                 findViewById(R.id.stageTwoCloseButton).setVisibility(View.VISIBLE);
             }
 
