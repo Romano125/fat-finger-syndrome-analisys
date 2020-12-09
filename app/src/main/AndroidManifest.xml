@@ -12,20 +12,20 @@
         android:icon="@mipmap/touchy_logo"
         android:label="@string/app_name"
         android:requestLegacyExternalStorage="true"
+        android:configChanges="locale|orientation"
         android:roundIcon="@mipmap/touchy_logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
             android:name=".Activities.SplashActivity"
             tools:ignore="InnerclassSeparator,LockedOrientationActivity">
-        </activity>
-        <activity android:name=".Activities.CalibrationSetupActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".Activities.MainMenuActivity" />
         <activity android:name=".Activities.CalibrationActivity" />
         <activity android:name=".Activities.StageOneActivity" />
         <activity android:name=".Activities.StageTwoActivity" />

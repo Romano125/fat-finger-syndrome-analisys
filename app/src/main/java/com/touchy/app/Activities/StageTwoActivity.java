@@ -64,7 +64,7 @@ public class StageTwoActivity extends AppCompatActivity {
     }
 
     public void navigateBack(View view) {
-        Intent intent = new Intent(this, CalibrationSetupActivity.class);
+        Intent intent = new Intent(this, MainMenuActivity.class);
         startActivity(intent);
         finish();
     }

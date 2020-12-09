@@ -13,4 +13,32 @@
     <string name="number_nine">9</string>
     <string name="btn_clear">Clear</string>
     <string name="btn_backspace">Back</string>
+
+    <string name="error_message">You must do the calibration first!</string>
+
+    <string name="main_menu_subtitle">Fat finger syndrome test application</string>
+    <string name="subject_name_hint">Name</string>
+    <string name="main_menu_holding_technique_hint">Select holding technique:</string>
+    <string name="one_handed_technique_hint">One-Handed</string>
+    <string name="two_handed_technique_hint">Two-Handed</string>
+    <string name="calibration_button_text">Calibration</string>
+    <string name="start_button_text">Start</string>
+    <string name="settings_title">Settings</string>
+    <string name="select_target_radius_hint">Select target radius:</string>
+    <string name="decrease_button_symbol" translatable="false">-</string>
+    <string name="settings_initial_value" translatable="false">0</string>
+    <string name="increase_button_symbol" translatable="false">+</string>
+    <string name="select_session_length_hint">Select session length:</string>
+    <string name="enable_help_hint">Enable help:</string>
+    <string name="positive_text">Yes</string>
+    <string name="negative_text">No</string>
+    <string name="save_button_text">Save</string>
+    <string name="stage_1_welcome">Stage 1</string>
+    <string name="stage_2_welcome">Stage 2</string>
+    <string name="type_this_code_hint">Type this code:</string>
+    <string name="english_locale" translatable="false">en</string>
+    <string name="croatian_locale" translatable="false">hr</string>
+    <string name="holding_technique_error_message">You must select holding technique!</string>
+    <string name="name_error_message">Name is required!</string>
+    <string name="calibration_not_passed_error_message">You must do the calibration first!</string>
 </resources>

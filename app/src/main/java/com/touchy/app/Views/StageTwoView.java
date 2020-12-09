@@ -12,7 +12,7 @@ import android.widget.TextView;
 import androidx.annotation.IdRes;
 
 import com.google.android.material.textview.MaterialTextView;
-import com.touchy.app.Activities.CalibrationSetupActivity;
+import com.touchy.app.Activities.MainMenuActivity;
 import com.touchy.app.R;
 
 public class StageTwoView extends FrameLayout implements View.OnClickListener {
@@ -90,7 +90,7 @@ public class StageTwoView extends FrameLayout implements View.OnClickListener {
         if (materialTextView.getText().equals(getInputText())) {
             System.out.println("Total time: " + ((System.currentTimeMillis() - startTime) / 1000));
 
-            Intent intent = new Intent(getContext(), CalibrationSetupActivity.class);
+            Intent intent = new Intent(getContext(), MainMenuActivity.class);
             getContext().startActivity(intent);
         }
     }

@@ -4,11 +4,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -22,11 +26,14 @@ import com.touchy.app.Utils.ScreenHelper;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.Locale;
 import java.util.Objects;
 
-public class CalibrationSetupActivity extends AppCompatActivity {
+public class MainMenuActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
     private String selectedHandingTechnique = "";
+
+    MaterialTextView selectedLanguage;
 
     private static final int STORAGE_PERMISSIONS_REQUEST_CODE = 5;
     private static final String[] STORAGE_PERMISSIONS = {
@@ -36,15 +43,19 @@ public class CalibrationSetupActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_calibration_setup);
+        setContentView(R.layout.activity_main_menu);
 
         ScreenHelper.setActivityInitialLayout(this);
 
         sharedPreferences = getApplicationContext().getSharedPreferences("calibrationSetupPreference", MODE_PRIVATE);
 
+        selectedLanguage = findViewById(R.id.languageText);
+
+        selectedLanguage.setText(sharedPreferences.getString("applicationLanguage", getString(R.string.croatian_locale)));
+
         verifyPermissions();
 
-        RadioGroup radioGroup = (RadioGroup) findViewById(R.id.handednessRadioGroup);
+        RadioGroup radioGroup = findViewById(R.id.handednessRadioGroup);
         radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             MaterialRadioButton radioButton = findViewById(checkedId);
 
@@ -68,12 +79,12 @@ public class CalibrationSetupActivity extends AppCompatActivity {
         String subjectName = String.valueOf(((TextInputEditText) findViewById(R.id.subjectNameText)).getText());
 
         if (subjectName.equals("")) {
-            subjectNameLayout.setError("Name is required!");
+            subjectNameLayout.setError(getString(R.string.name_error_message));
             return;
         }
 
         if (selectedHandingTechnique.equals("")) {
-            showErrorMessage("You must select holding technique!");
+            showErrorMessage(getString(R.string.holding_technique_error_message));
             return;
         }
 
@@ -100,17 +111,17 @@ public class CalibrationSetupActivity extends AppCompatActivity {
         String subjectName = String.valueOf(((TextInputEditText) findViewById(R.id.subjectNameText)).getText());
 
         if (subjectName.equals("")) {
-            subjectNameLayout.setError("Name is required!");
+            subjectNameLayout.setError(getString(R.string.name_error_message));
             return;
         }
 
         if (selectedHandingTechnique.equals("")) {
-            showErrorMessage("You must select holding technique!");
+            showErrorMessage(getString(R.string.holding_technique_error_message));
             return;
         }
 
         if (!Common.hasPassedCalibration()) {
-            showErrorMessage("You must do the calibration first!");
+            showErrorMessage(getString(R.string.calibration_not_passed_error_message));
             return;
         }
 
@@ -121,6 +132,28 @@ public class CalibrationSetupActivity extends AppCompatActivity {
 
         startActivity(intent);
         finish();
+    }
+
+    public void setLocale(View v) {
+        @SuppressLint("CommitPrefEdits") SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        Locale myLocale = new Locale(selectedLanguage.getText().toString());
+        Resources res = getResources();
+        DisplayMetrics dm = res.getDisplayMetrics();
+        Configuration conf = res.getConfiguration();
+        conf.locale = myLocale;
+        res.updateConfiguration(conf, dm);
+
+        if (selectedLanguage.getText().equals("hr")) {
+            editor.putString("applicationLanguage", getString(R.string.english_locale));
+        } else {
+            editor.putString("applicationLanguage", getString(R.string.croatian_locale));
+        }
+        editor.apply();
+
+        Intent refresh = new Intent(this, MainMenuActivity.class);
+        finish();
+        startActivity(refresh);
     }
 
     private void showErrorMessage(String errorMessage) {

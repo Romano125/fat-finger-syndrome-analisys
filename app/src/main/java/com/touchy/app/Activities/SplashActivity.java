@@ -47,7 +47,7 @@ public class SplashActivity extends AppCompatActivity {
             }
         });
 
-        final Intent intent = new Intent(this, CalibrationSetupActivity.class);
+        final Intent intent = new Intent(this, MainMenuActivity.class);
         Thread timer = new Thread() {
             public void run() {
                 try {

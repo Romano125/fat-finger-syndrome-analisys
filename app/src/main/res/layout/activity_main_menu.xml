@@ -7,6 +7,22 @@
     android:background="#E4E0E0">
 
     <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/languageText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/nunito"
+        android:onClick="setLocale"
+        android:text="@string/croatian_locale"
+        android:textColor="#C8052C"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.041"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.022" />
+
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/appName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -25,7 +41,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/nunito"
-        android:text="Fat finger sindrome test application"
+        android:text="@string/main_menu_subtitle"
         android:textSize="15sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -40,7 +56,7 @@
         android:fontFamily="@font/nunito"
         android:shadowColor="#F44336"
         android:shadowRadius="20"
-        android:text="You must do the calibration first!"
+        android:text="@string/error_message"
         android:textColor="#DA0323"
         android:textSize="18sp"
         android:visibility="gone"
@@ -58,7 +74,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="80dp"
         android:fontFamily="@font/nunito"
-        android:hint="Name"
+        android:hint="@string/subject_name_hint"
         app:errorEnabled="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -81,7 +97,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="100dp"
         android:fontFamily="@font/nunito"
-        android:text="Select holding technique:"
+        android:text="@string/main_menu_holding_technique_hint"
         app:layout_constraintBottom_toTopOf="@+id/calibrationButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
@@ -104,15 +120,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/nunito"
-            android:layout_marginRight="40dp"
-            android:text="One-Handed" />
+            android:layout_marginEnd="40dp"
+            android:text="@string/one_handed_technique_hint" />
 
         <com.google.android.material.radiobutton.MaterialRadioButton
             android:id="@+id/handednessRight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/nunito"
-            android:text="Two-Handed" />
+            android:text="@string/two_handed_technique_hint" />
     </RadioGroup>
 
     <Button
@@ -134,7 +150,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="156dp"
         android:onClick="startCalibration"
-        android:text="Calibration"
+        android:text="@string/calibration_button_text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.485"
@@ -148,7 +164,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:onClick="goToStageOne"
-        android:text="Start"
+        android:text="@string/start_button_text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"

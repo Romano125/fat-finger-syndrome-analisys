@@ -10,7 +10,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.touchy.app.Activities.CalibrationSetupActivity;
+import com.touchy.app.Activities.MainMenuActivity;
 import com.touchy.app.Constants;
 import com.touchy.app.Models.StatisticsData;
 import com.touchy.app.Models.Target;
@@ -152,7 +152,7 @@ public class CalibrationView extends View {
             touchedAreaAverageSize = new HashMap<>();
             touchedAreaAveragePressure = new HashMap<>();
 
-            Intent intent = new Intent(getContext(), CalibrationSetupActivity.class);
+            Intent intent = new Intent(getContext(), MainMenuActivity.class);
             getContext().startActivity(intent);
         }
 

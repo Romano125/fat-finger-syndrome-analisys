@@ -25,7 +25,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/nunito"
-        android:text="Settings"
+        android:text="@string/settings_title"
         android:textSize="30sp"
         app:layout_constraintBottom_toTopOf="@+id/targetRadiusLayout"
         app:layout_constraintEnd_toEndOf="parent"
@@ -40,7 +40,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="80dp"
         android:fontFamily="@font/nunito"
-        android:text="Select target radius:"
+        android:text="@string/select_target_radius_hint"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/settingsTitle" />
@@ -61,7 +61,7 @@
             android:layout_width="50dp"
             android:layout_height="match_parent"
             android:fontFamily="@font/nunito"
-            android:text="-"
+            android:text="@string/decrease_button_symbol"
             android:textAlignment="center"
             android:onClick="decreaseTargetRadius"
             android:textColor="@android:color/black"
@@ -74,7 +74,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
-            android:hint="0"
+            android:hint="@string/settings_initial_value"
             android:inputType="number"
             android:maxLength="3"
             android:maxLines="1"
@@ -90,7 +90,7 @@
             android:layout_marginStart="24dp"
             android:fontFamily="@font/nunito"
             android:onClick="increaseTargetRadius"
-            android:text="+"
+            android:text="@string/increase_button_symbol"
             android:textAlignment="center"
             android:textColor="@android:color/black"
             android:textSize="30sp"
@@ -104,7 +104,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:fontFamily="@font/nunito"
-        android:text="Select session length:"
+        android:text="@string/select_session_length_hint"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/targetRadiusLayout" />
@@ -126,7 +126,7 @@
             android:layout_height="match_parent"
             android:fontFamily="@font/nunito"
             android:onClick="decreaseSessionLength"
-            android:text="-"
+            android:text="@string/decrease_button_symbol"
             android:textAlignment="center"
             android:textColor="@android:color/black"
             android:textSize="30sp"
@@ -138,7 +138,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
-            android:hint="0"
+            android:hint="@string/settings_initial_value"
             android:inputType="number"
             android:maxLength="3"
             android:maxLines="1"
@@ -155,7 +155,7 @@
             android:fontFamily="@font/nunito"
             android:onClick="increaseSessionLength"
             android:textColor="@android:color/black"
-            android:text="+"
+            android:text="@string/increase_button_symbol"
             android:textAlignment="center"
             android:textSize="30sp"
             app:layout_constraintStart_toEndOf="@+id/sessionLengthText"
@@ -168,7 +168,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:fontFamily="@font/nunito"
-        android:text="Enable help:"
+        android:text="@string/enable_help_hint"
         app:layout_constraintBottom_toTopOf="@+id/helpRadioGroup"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.487"
@@ -190,16 +190,16 @@
             android:id="@+id/helpPositive"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="40dp"
+            android:layout_marginEnd="40dp"
             android:fontFamily="@font/nunito"
-            android:text="Yes" />
+            android:text="@string/positive_text" />
 
         <com.google.android.material.radiobutton.MaterialRadioButton
             android:id="@+id/helpNegative"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/nunito"
-            android:text="No" />
+            android:text="@string/negative_text" />
     </RadioGroup>
 
     <Button
@@ -208,7 +208,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="60dp"
         android:onClick="saveSettings"
-        android:text="Save"
+        android:text="@string/save_button_text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"

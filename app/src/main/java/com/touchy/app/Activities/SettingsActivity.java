@@ -56,7 +56,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     public void saveSettings(View view) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        final Intent intent = new Intent(this, CalibrationSetupActivity.class);
+        final Intent intent = new Intent(this, MainMenuActivity.class);
         int targetRadius = Integer.parseInt(String.valueOf(targetRadiusText.getText()));
         int sessionLengthInTouches = Integer.parseInt(String.valueOf(sessionLengthText.getText()));
 
@@ -114,7 +114,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     public void navigateBack(View view) {
-        Intent intent = new Intent(SettingsActivity.this, CalibrationSetupActivity.class);
+        Intent intent = new Intent(SettingsActivity.this, MainMenuActivity.class);
         startActivity(intent);
         finish();
     }
