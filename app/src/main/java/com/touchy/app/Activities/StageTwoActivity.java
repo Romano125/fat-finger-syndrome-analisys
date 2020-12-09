@@ -1,5 +1,6 @@
 package com.touchy.app.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.Animation;
@@ -40,6 +41,7 @@ public class StageTwoActivity extends AppCompatActivity {
                 codePattern.setText(randomStringGenerator(CODE_LENGTH));
                 codePattern.setVisibility(View.VISIBLE);
                 findViewById(R.id.stageTwoView).setVisibility(View.VISIBLE);
+                findViewById(R.id.stageTwoCloseButton).setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -59,6 +61,12 @@ public class StageTwoActivity extends AppCompatActivity {
         }
 
         return code.toString();
+    }
+
+    public void navigateBack(View view) {
+        Intent intent = new Intent(this, CalibrationSetupActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     @Override

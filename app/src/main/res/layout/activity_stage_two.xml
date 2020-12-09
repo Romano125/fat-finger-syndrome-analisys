@@ -7,6 +7,20 @@
     tools:context=".Activities.StageTwoActivity"
     android:background="#E4E0E0">
 
+    <Button
+        android:id="@+id/stageTwoCloseButton"
+        android:layout_width="17dp"
+        android:layout_height="17dp"
+        android:background="@drawable/close"
+        android:onClick="navigateBack"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.958"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.022"
+        android:visibility="gone"/>
+
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/stageTwoInfo"
         android:layout_width="wrap_content"
