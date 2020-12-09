@@ -31,7 +31,7 @@ public class CalibrationView extends View {
     private SharedPreferences sharedPreferences;
     private final Random random = new Random();
     private final Paint paint = new Paint();
-    private int sessionLengthInTouches, radius, touchCounter = 0;
+    private int sessionLengthInTouches, radius, touchCounter = 1;
     private final String screenResolution, subjectName, subjectHandedness;
     private long startTime = System.currentTimeMillis();
 
@@ -136,9 +136,14 @@ public class CalibrationView extends View {
             statisticsData.setTouchedAreaAverageSize(touchedAreaAverageSize);
             statisticsData.setTouchedAreaAverageSize(touchedAreaAveragePressure);
 
-            testSubject.setTimeSpent(System.currentTimeMillis() - startTime);
+            testSubject.setTimeSpent((System.currentTimeMillis() - startTime) / 1000);
 
             Common.saveStatistics(Constants.CALIBRATION_LOG_FILENAME, testSubject, target, statisticsData);
+
+            touchedAreas = new HashMap<>();
+            touchedAreaAverageError = new HashMap<>();
+            touchedAreaAverageSize = new HashMap<>();
+            touchedAreaAveragePressure = new HashMap<>();
 
             Intent intent = new Intent(getContext(), CalibrationSetupActivity.class);
             getContext().startActivity(intent);

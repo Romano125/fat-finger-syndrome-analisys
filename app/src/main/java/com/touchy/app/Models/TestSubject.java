@@ -36,4 +36,8 @@ public class TestSubject {
     public void setTimeSpent(long timeSpent) {
         this.timeSpent = timeSpent;
     }
+
+    public long getTimeSpent() {
+        return timeSpent;
+    }
 }

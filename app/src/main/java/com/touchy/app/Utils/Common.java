@@ -48,8 +48,18 @@ public class Common {
 
     public static void saveStatistics(String filename, TestSubject testSubject, Target target, StatisticsData stats) {
         Gson gson = new Gson();
+//        String header = "name;handedness;screenResolution;sessionLength;data;targetRadius;timeSpent;northWestTouches;northWestAverageError;northWestAveragePressure;northWestAverageSize;northEastTouches;northEastAverageError;northEastAveragePressure;northEastAverageSize;southWestTouches;southWestAverageError;southWestAveragePressure;southWestAverageSize;southEastTouches;southEastAverageError;southEastAveragePressure;southEastAverageSize;centerTouches;centerAverageError;centerAveragePressure;centerAverageSize;\n";
+        String subjectString = String.format(Locale.ENGLISH, "%s;%s;%s;%d;%s;%d;%d;",
+                testSubject.getName(),
+                testSubject.getHandedness(),
+                testSubject.getScreenResolution(),
+                testSubject.getSessionLengthInTouches(),
+                testSubject.getDate(),
+                target.getRadius(),
+                testSubject.getTimeSpent());
 
-        File sessionFilePath = new File(Common.createOutputDirectory("Touchy"), String.format("%s.txt", filename));
+        File sessionFilePath = new File(Common.createOutputDirectory("Touchy"), String.format("%s.json", filename));
+        File sessionFilePathCSV = new File(Common.createOutputDirectory("Touchy"), String.format("%s.csv", filename));
 
         List<JSONObject> statistics = new ArrayList<>();
         if (sessionFilePath.length() > 0) {
@@ -62,6 +72,7 @@ public class Common {
 
         try {
             List<StatisticsData> statisticsDataList = new ArrayList<>();
+            StringBuilder dataString = new StringBuilder();
             for (Constants.TOUCHED_AREA touchedArea : Constants.TOUCHED_AREA.values()) {
                 int touches = stats.getTouchedAreas().get(String.valueOf(touchedArea)) == null ? 0 : stats.getTouchedAreas().get(String.valueOf(touchedArea));
                 double averageError = stats.getTouchedAreaAverageError().get(String.valueOf(touchedArea)) == null ? 0 : stats.getTouchedAreaAverageError().get(String.valueOf(touchedArea));
@@ -70,6 +81,8 @@ public class Common {
 
                 StatisticsData statisticsData = new StatisticsData(String.valueOf(touchedArea), touches, averageError, averageSize, averagePressure);
                 statisticsDataList.add(statisticsData);
+
+                dataString.append(touchedArea).append(";").append(touches).append(";").append(averageError).append(";").append(averageSize).append(";").append(averagePressure).append(";");
             }
 
             JSONObject sessionData = new JSONObject();
@@ -81,16 +94,23 @@ public class Common {
 
             String json = gson.toJson(statistics);
 
-            try {
-                FileWriter out = new FileWriter(sessionFilePath);
-                out.write(json);
-                out.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-                Log.w("FileWriter", "Couldn't create file to store data.");
-            }
+            String csvData = subjectString + dataString + "\n";
+
+            writeToAFile(sessionFilePathCSV, csvData, true);
+            writeToAFile(sessionFilePath, json, false);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private static void writeToAFile(File file, String data, boolean append) {
+        try {
+            FileWriter out = new FileWriter(file, append);
+            out.write(data);
+            out.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.w("FileWriter", "Couldn't create file to store data.");
         }
     }
 

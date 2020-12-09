@@ -44,7 +44,7 @@ public class StageOneView extends View {
     private final Random random = new Random();
     private final MediaPlayer mediaPlayer;
     private final Paint paint = new Paint();
-    private int sessionLengthInTouches, radius, touchCount = 0;
+    private int sessionLengthInTouches, radius, touchCount = 1;
     private String screenResolution, subjectName, subjectHandedness;
     private long startTime = System.currentTimeMillis();
 
@@ -172,9 +172,14 @@ public class StageOneView extends View {
                 statisticsData.setTouchedAreaAverageSize(touchedAreaAverageSize);
                 statisticsData.setTouchedAreaAverageSize(touchedAreaAveragePressure);
 
-                testSubject.setTimeSpent(System.currentTimeMillis() - startTime);
+                testSubject.setTimeSpent((System.currentTimeMillis() - startTime) / 1000);
 
                 Common.saveStatistics(Constants.STAGE_ONE_LOG_FILENAME, testSubject, target, statisticsData);
+
+                touchedAreas = new HashMap<>();
+                touchedAreaAverageError = new HashMap<>();
+                touchedAreaAverageSize = new HashMap<>();
+                touchedAreaAveragePressure = new HashMap<>();
 
                 Intent intent = new Intent(getContext(), StageTwoActivity.class);
                 getContext().startActivity(intent);
@@ -195,7 +200,7 @@ public class StageOneView extends View {
     private List<StatisticsData> getLastCalibrationData() {
         Gson gson = new Gson();
 
-        File sessionFilePath = new File(Common.createOutputDirectory("Touchy"), String.format("%s.txt", Constants.CALIBRATION_LOG_FILENAME));
+        File sessionFilePath = new File(Common.createOutputDirectory("Touchy"), String.format("%s.json", Constants.CALIBRATION_LOG_FILENAME));
 
         List<JSONObject> statistics;
         List<StatisticsData> statisticsData = null;

@@ -88,7 +88,7 @@ public class StageTwoView extends FrameLayout implements View.OnClickListener {
 
     private void checkIfPhraseIsCorrect() {
         if (materialTextView.getText().equals(getInputText())) {
-            System.out.println("Total time: " + (System.currentTimeMillis() - startTime));
+            System.out.println("Total time: " + ((System.currentTimeMillis() - startTime) / 1000));
 
             Intent intent = new Intent(getContext(), CalibrationSetupActivity.class);
             getContext().startActivity(intent);
