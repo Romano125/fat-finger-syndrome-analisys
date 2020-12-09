@@ -1,13 +1,14 @@
 package com.touchy.app.Models;
 
 public class TestSubject {
-    private String name, handedness, screenResolution, date;
+    private String name, handingTechnique, screenResolution, date;
     private int sessionLengthInTouches;
     private long timeSpent;
+    private boolean isHelpEnabled;
 
-    public TestSubject(String name, String handedness, String screenResolution, String date, int sessionLengthInTouches) {
+    public TestSubject(String name, String handingTechnique, String screenResolution, String date, int sessionLengthInTouches) {
         this.name = name;
-        this.handedness = handedness;
+        this.handingTechnique = handingTechnique;
         this.screenResolution = screenResolution;
         this.date = date;
         this.sessionLengthInTouches = sessionLengthInTouches;
@@ -17,8 +18,8 @@ public class TestSubject {
         return name;
     }
 
-    public String getHandedness() {
-        return handedness;
+    public String getHandingTechnique() {
+        return handingTechnique;
     }
 
     public String getScreenResolution() {
@@ -39,5 +40,13 @@ public class TestSubject {
 
     public long getTimeSpent() {
         return timeSpent;
+    }
+
+    public boolean isHelpEnabled() {
+        return isHelpEnabled;
+    }
+
+    public void setHelpEnabled(boolean helpEnabled) {
+        isHelpEnabled = helpEnabled;
     }
 }

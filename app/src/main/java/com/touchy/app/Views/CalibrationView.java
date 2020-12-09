@@ -32,8 +32,9 @@ public class CalibrationView extends View {
     private final Random random = new Random();
     private final Paint paint = new Paint();
     private int sessionLengthInTouches, radius, touchCounter = 1;
-    private final String screenResolution, subjectName, subjectHandedness;
+    private final String screenResolution, subjectName, subjectHandingTechnique;
     private long startTime = System.currentTimeMillis();
+    private boolean isHelpEnabled;
 
     private static HashMap<String, Integer> touchedAreas = new HashMap<>();
     private static HashMap<String, Double> touchedAreaAverageError = new HashMap<>();
@@ -51,9 +52,11 @@ public class CalibrationView extends View {
         this.sessionLengthInTouches = sharedPreferences.getInt("sessionLengthInTouches", 10);
         this.screenResolution = sharedPreferences.getString("screenResolution", "-");
         this.subjectName = sharedPreferences.getString("subjectName", "-");
-        this.subjectHandedness = sharedPreferences.getString("subjectHandedness", "-");
+        this.subjectHandingTechnique = sharedPreferences.getString("subjectHandingTechnique", "-");
+        this.isHelpEnabled = sharedPreferences.getBoolean("helpEnabled", false);
 
-        testSubject = new TestSubject(subjectName, subjectHandedness, screenResolution, Common.getFormattedDate(), sessionLengthInTouches);
+        testSubject = new TestSubject(subjectName, subjectHandingTechnique, screenResolution, Common.getFormattedDate(), sessionLengthInTouches);
+        testSubject.setHelpEnabled(isHelpEnabled);
         target.setRadius(radius);
     }
 
@@ -67,9 +70,11 @@ public class CalibrationView extends View {
         this.sessionLengthInTouches = sharedPreferences.getInt("sessionLengthInTouches", 10);
         this.screenResolution = sharedPreferences.getString("screenResolution", "-");
         this.subjectName = sharedPreferences.getString("subjectName", "-");
-        this.subjectHandedness = sharedPreferences.getString("subjectHandedness", "-");
+        this.subjectHandingTechnique = sharedPreferences.getString("subjectHandingTechnique", "-");
+        this.isHelpEnabled = sharedPreferences.getBoolean("helpEnabled", false);
 
-        testSubject = new TestSubject(subjectName, subjectHandedness, screenResolution, Common.getFormattedDate(), sessionLengthInTouches);
+        testSubject = new TestSubject(subjectName, subjectHandingTechnique, screenResolution, Common.getFormattedDate(), sessionLengthInTouches);
+        testSubject.setHelpEnabled(isHelpEnabled);
         target.setRadius(radius);
     }
 
@@ -83,9 +88,11 @@ public class CalibrationView extends View {
         this.sessionLengthInTouches = sharedPreferences.getInt("sessionLengthInTouches", 10);
         this.screenResolution = sharedPreferences.getString("screenResolution", "-");
         this.subjectName = sharedPreferences.getString("subjectName", "-");
-        this.subjectHandedness = sharedPreferences.getString("subjectHandedness", "-");
+        this.subjectHandingTechnique = sharedPreferences.getString("subjectHandingTechnique", "-");
+        this.isHelpEnabled = sharedPreferences.getBoolean("helpEnabled", false);
 
-        testSubject = new TestSubject(subjectName, subjectHandedness, screenResolution, Common.getFormattedDate(), sessionLengthInTouches);
+        testSubject = new TestSubject(subjectName, subjectHandingTechnique, screenResolution, Common.getFormattedDate(), sessionLengthInTouches);
+        testSubject.setHelpEnabled(isHelpEnabled);
         target.setRadius(radius);
     }
 

@@ -15,6 +15,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.RadioGroup;
 
 import com.google.android.material.radiobutton.MaterialRadioButton;
+import com.google.android.material.textview.MaterialTextView;
 import com.touchy.app.R;
 import com.touchy.app.Utils.Common;
 import com.touchy.app.Utils.ScreenHelper;
@@ -25,7 +26,7 @@ import java.util.Objects;
 
 public class CalibrationSetupActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
-    private String selectedHandedness;
+    private String selectedHandingTechnique = "";
 
     private static final int STORAGE_PERMISSIONS_REQUEST_CODE = 5;
     private static final String[] STORAGE_PERMISSIONS = {
@@ -47,7 +48,7 @@ public class CalibrationSetupActivity extends AppCompatActivity {
         radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             MaterialRadioButton radioButton = findViewById(checkedId);
 
-            selectedHandedness = (String) radioButton.getText();
+            selectedHandingTechnique = (String) radioButton.getText();
         });
     }
 
@@ -71,8 +72,13 @@ public class CalibrationSetupActivity extends AppCompatActivity {
             return;
         }
 
+        if (selectedHandingTechnique.equals("")) {
+            showErrorMessage("You must select holding technique!");
+            return;
+        }
+
         editor.putString("subjectName", subjectName);
-        editor.putString("subjectHandedness", selectedHandedness);
+        editor.putString("subjectHandingTechnique", selectedHandingTechnique);
         editor.putString("screenResolution", Common.getScreenResolution(getWindowManager().getDefaultDisplay()));
         editor.apply();
 
@@ -98,13 +104,42 @@ public class CalibrationSetupActivity extends AppCompatActivity {
             return;
         }
 
+        if (selectedHandingTechnique.equals("")) {
+            showErrorMessage("You must select holding technique!");
+            return;
+        }
+
+        if (!Common.hasPassedCalibration()) {
+            showErrorMessage("You must do the calibration first!");
+            return;
+        }
+
         editor.putString("subjectName", subjectName);
-        editor.putString("subjectHandedness", selectedHandedness);
+        editor.putString("subjectHandingTechnique", selectedHandingTechnique);
         editor.putString("screenResolution", Common.getScreenResolution(getWindowManager().getDefaultDisplay()));
         editor.apply();
 
         startActivity(intent);
         finish();
+    }
+
+    private void showErrorMessage(String errorMessage) {
+        MaterialTextView errorMessageTextView = findViewById(R.id.errorMessage);
+        errorMessageTextView.setText(errorMessage);
+        errorMessageTextView.setVisibility(View.VISIBLE);
+
+        Thread timer = new Thread() {
+            public void run() {
+                try {
+                    sleep(1500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } finally {
+                    runOnUiThread(() -> errorMessageTextView.setVisibility(View.GONE));
+                }
+            }
+        };
+        timer.start();
     }
 
     private void verifyPermissions() {

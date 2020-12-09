@@ -14,6 +14,7 @@ import com.touchy.app.Models.Target;
 import com.touchy.app.Models.TestSubject;
 import com.touchy.app.Models.Touch;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -48,10 +49,9 @@ public class Common {
 
     public static void saveStatistics(String filename, TestSubject testSubject, Target target, StatisticsData stats) {
         Gson gson = new Gson();
-//        String header = "name;handedness;screenResolution;sessionLength;data;targetRadius;timeSpent;northWestTouches;northWestAverageError;northWestAveragePressure;northWestAverageSize;northEastTouches;northEastAverageError;northEastAveragePressure;northEastAverageSize;southWestTouches;southWestAverageError;southWestAveragePressure;southWestAverageSize;southEastTouches;southEastAverageError;southEastAveragePressure;southEastAverageSize;centerTouches;centerAverageError;centerAveragePressure;centerAverageSize;\n";
         String subjectString = String.format(Locale.ENGLISH, "%s;%s;%s;%d;%s;%d;%d;",
                 testSubject.getName(),
-                testSubject.getHandedness(),
+                testSubject.getHandingTechnique(),
                 testSubject.getScreenResolution(),
                 testSubject.getSessionLengthInTouches(),
                 testSubject.getDate(),
@@ -146,5 +146,11 @@ public class Common {
         }
 
         return String.valueOf(Constants.TOUCHED_AREA.NORTH_EAST);
+    }
+
+    public static boolean hasPassedCalibration() {
+        File sessionFilePath = new File(createOutputDirectory("Touchy"), String.format("%s.json", Constants.CALIBRATION_LOG_FILENAME));
+
+        return sessionFilePath.length() > 0;
     }
 }
