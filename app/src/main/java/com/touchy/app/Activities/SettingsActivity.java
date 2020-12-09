@@ -21,7 +21,7 @@ import java.util.Objects;
 public class SettingsActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
     private TextInputEditText targetRadiusText, sessionLengthText;
-    private String selectedHelpOption;
+    private String selectedHelpOption = "No";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
