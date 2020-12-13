@@ -21,6 +21,7 @@ import com.touchy.app.Activities.MainMenuActivity;
 import com.touchy.app.Constants;
 import com.touchy.app.Models.StatisticsData;
 import com.touchy.app.Models.Target;
+import com.touchy.app.Models.TestSubject;
 import com.touchy.app.Models.Touch;
 import com.touchy.app.R;
 import com.touchy.app.Utils.Common;
@@ -31,6 +32,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -40,10 +42,18 @@ public class StageTwoView extends FrameLayout implements View.OnTouchListener {
     private TextInputEditText mPasswordField;
     private MaterialTextView materialTextView;
 
+    private TestSubject testSubject;
+    private Target target = new Target();
+    private StatisticsData statisticsData = new StatisticsData();
+
     private long startTime = System.currentTimeMillis();
-    private int sessionLengthInTouches, radius, touchCount = 1;
-    private List<StatisticsData> lastCalibrationStatisticsData;
     private boolean isHelpEnabled;
+
+    private static HashMap<String, Integer> touchedAreas = new HashMap<>();
+    private static HashMap<String, Double> touchedAreaAverageError = new HashMap<>();
+    private static HashMap<String, Double> touchedAreaAverageSize = new HashMap<>();
+    private static HashMap<String, Double> touchedAreaAveragePressure = new HashMap<>();
+    private List<StatisticsData> lastCalibrationStatisticsData;
 
     public StageTwoView(Context context) {
         super(context);
@@ -62,11 +72,20 @@ public class StageTwoView extends FrameLayout implements View.OnTouchListener {
 
     private void init() {
         SharedPreferences sharedPreferences = getContext().getSharedPreferences("calibrationSetupPreference", MODE_PRIVATE);
+
         isHelpEnabled = sharedPreferences.getBoolean("helpEnabled", false);
-//        radius = (int) px2dp(getResources(), sharedPreferences.getInt("targetRadius", 50));
+        int sessionLengthInTouches = sharedPreferences.getInt("sessionLengthInTouches", 10);
+        int radius = sharedPreferences.getInt("targetRadius", 50);
+        String screenResolution = sharedPreferences.getString("screenResolution", "-");
+        String subjectName = sharedPreferences.getString("subjectName", "-");
+        String subjectHandingTechnique = sharedPreferences.getString("subjectHandingTechnique", "-");
+
+        lastCalibrationStatisticsData = getLastCalibrationData();
+        testSubject = new TestSubject(subjectName, subjectHandingTechnique, screenResolution, Common.getFormattedDate(), sessionLengthInTouches);
+        testSubject.setHelpEnabled(isHelpEnabled);
+        target.setRadius(radius);
 
         inflate(getContext(), R.layout.view_stage_two, this);
-        lastCalibrationStatisticsData = getLastCalibrationData();
         initViews();
     }
 
@@ -108,12 +127,21 @@ public class StageTwoView extends FrameLayout implements View.OnTouchListener {
                 .orElse(null);
 
         if (touchedArea.equals(String.valueOf(Constants.TOUCHED_AREA.CENTER)) || (touchError < stats.getAverageError() && isHelpEnabled)) {
-            System.out.println(((TextView) nearestTarget).getText());
             mPasswordField.append(((TextView) nearestTarget).getText());
             touchError = 0;
         }
 
-//        System.out.println(touchError + " " + stats.getAverageError());
+        touchedAreas.put(touchedArea, touchedAreas.containsKey(touchedArea) ? touchedAreas.get(touchedArea) + 1 : 1);
+        touchedAreaAverageError.put(touchedArea, touchedAreaAverageError.containsKey(touchedArea) ?
+                (touchedAreaAverageError.get(touchedArea) + touchError ) / touchedAreas.get(touchedArea)
+                : touchError);
+        touchedAreaAverageSize.put(touchedArea, touchedAreaAverageSize.containsKey(touchedArea) ?
+                (touchedAreaAverageSize.get(touchedArea) + touchSize ) / touchedAreas.get(touchedArea)
+                : touchSize);
+        touchedAreaAveragePressure.put(touchedArea, touchedAreaAveragePressure.containsKey(touchedArea) ?
+                (touchedAreaAveragePressure.get(touchedArea) + touchPressure ) / touchedAreas.get(touchedArea)
+                : touchPressure);
+
         return false;
     }
 
@@ -158,12 +186,11 @@ public class StageTwoView extends FrameLayout implements View.OnTouchListener {
         }
 
         switch (v.getId()) {
-            case R.id.t9_key_clear: { // handle clear button
+            case R.id.t9_key_clear: {
                 mPasswordField.setText(null);
             }
             break;
-            case R.id.t9_key_backspace: { // handle backspace button
-                // delete one character
+            case R.id.t9_key_backspace: {
                 Editable editable = mPasswordField.getText();
                 assert editable != null;
                 int charCount = editable.length();
@@ -179,9 +206,21 @@ public class StageTwoView extends FrameLayout implements View.OnTouchListener {
 
     private void checkIfPhraseIsCorrect() {
         if (materialTextView.getText().equals(getInputText())) {
-            System.out.println("Total time: " + ((System.currentTimeMillis() - startTime) / 1000));
+            System.out.println("Saving statistics...");
 
-            // save statistics
+            statisticsData.setTouchedAreas(touchedAreas);
+            statisticsData.setTouchedAreaAverageError(touchedAreaAverageError);
+            statisticsData.setTouchedAreaAverageSize(touchedAreaAverageSize);
+            statisticsData.setTouchedAreaAverageSize(touchedAreaAveragePressure);
+
+            testSubject.setTimeSpent((System.currentTimeMillis() - startTime) / 1000);
+
+            Common.saveStatistics(Constants.STAGE_TWO_LOG_FILENAME, testSubject, target, statisticsData);
+
+            touchedAreas = new HashMap<>();
+            touchedAreaAverageError = new HashMap<>();
+            touchedAreaAverageSize = new HashMap<>();
+            touchedAreaAveragePressure = new HashMap<>();
 
             Intent intent = new Intent(getContext(), MainMenuActivity.class);
             getContext().startActivity(intent);

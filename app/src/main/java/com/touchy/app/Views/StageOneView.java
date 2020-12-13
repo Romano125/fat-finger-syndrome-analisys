@@ -40,12 +40,10 @@ public class StageOneView extends View {
     private Target target = new Target();
     private StatisticsData statisticsData = new StatisticsData();
 
-    private SharedPreferences sharedPreferences;
     private final Random random = new Random();
-    private final MediaPlayer mediaPlayer;
+    private MediaPlayer mediaPlayer;
     private final Paint paint = new Paint();
     private int sessionLengthInTouches, radius, touchCount = 1;
-    private String screenResolution, subjectName, subjectHandingTechnique;
     private long startTime = System.currentTimeMillis();
     private boolean isHelpEnabled;
 
@@ -58,55 +56,27 @@ public class StageOneView extends View {
     public StageOneView(Context context) {
         super(context);
 
-        init(null, 0);
-
-        sharedPreferences = context.getSharedPreferences("calibrationSetupPreference", MODE_PRIVATE);
-
-        this.radius = sharedPreferences.getInt("targetRadius", 50);
-        this.sessionLengthInTouches = sharedPreferences.getInt("sessionLengthInTouches", 10);
-        this.screenResolution = sharedPreferences.getString("screenResolution", "-");
-        this.subjectName = sharedPreferences.getString("subjectName", "-");
-        this.subjectHandingTechnique = sharedPreferences.getString("subjectHandingTechnique", "-");
-        this.isHelpEnabled = sharedPreferences.getBoolean("helpEnabled", false);
-
-        mediaPlayer = MediaPlayer.create(context, R.raw.success_hit);
-        lastCalibrationStatisticsData = getLastCalibrationData();
-        testSubject = new TestSubject(subjectName, subjectHandingTechnique, screenResolution, Common.getFormattedDate(), sessionLengthInTouches);
-        testSubject.setHelpEnabled(isHelpEnabled);
-        target.setRadius(radius);
+        init(null, 0, context);
     }
 
     public StageOneView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(attrs, 0);
-
-        sharedPreferences = context.getSharedPreferences("calibrationSetupPreference", MODE_PRIVATE);
-
-        this.radius = sharedPreferences.getInt("targetRadius", 50);
-        this.sessionLengthInTouches = sharedPreferences.getInt("sessionLengthInTouches", 10);
-        this.screenResolution = sharedPreferences.getString("screenResolution", "-");
-        this.subjectName = sharedPreferences.getString("subjectName", "-");
-        this.subjectHandingTechnique = sharedPreferences.getString("subjectHandingTechnique", "-");
-        this.isHelpEnabled = sharedPreferences.getBoolean("helpEnabled", false);
-
-        mediaPlayer = MediaPlayer.create(context, R.raw.success_hit);
-        lastCalibrationStatisticsData = getLastCalibrationData();
-        testSubject = new TestSubject(subjectName, subjectHandingTechnique, screenResolution, Common.getFormattedDate(), sessionLengthInTouches);
-        testSubject.setHelpEnabled(isHelpEnabled);
-        target.setRadius(radius);
+        init(attrs, 0, context);
     }
 
     public StageOneView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        init(attrs, defStyle);
+        init(attrs, defStyle, context);
+    }
 
-        sharedPreferences = context.getSharedPreferences("calibrationSetupPreference", MODE_PRIVATE);
+    private void init(AttributeSet attrs, int defStyle, Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("calibrationSetupPreference", MODE_PRIVATE);
 
         this.radius = sharedPreferences.getInt("targetRadius", 50);
         this.sessionLengthInTouches = sharedPreferences.getInt("sessionLengthInTouches", 10);
-        this.screenResolution = sharedPreferences.getString("screenResolution", "-");
-        this.subjectName = sharedPreferences.getString("subjectName", "-");
-        this.subjectHandingTechnique = sharedPreferences.getString("subjectHandingTechnique", "-");
+        String screenResolution = sharedPreferences.getString("screenResolution", "-");
+        String subjectName = sharedPreferences.getString("subjectName", "-");
+        String subjectHandingTechnique = sharedPreferences.getString("subjectHandingTechnique", "-");
         this.isHelpEnabled = sharedPreferences.getBoolean("helpEnabled", false);
 
         mediaPlayer = MediaPlayer.create(context, R.raw.success_hit);
@@ -114,9 +84,6 @@ public class StageOneView extends View {
         testSubject = new TestSubject(subjectName, subjectHandingTechnique, screenResolution, Common.getFormattedDate(), sessionLengthInTouches);
         testSubject.setHelpEnabled(isHelpEnabled);
         target.setRadius(radius);
-    }
-
-    private void init(AttributeSet attrs, int defStyle) {
     }
 
     @Override
