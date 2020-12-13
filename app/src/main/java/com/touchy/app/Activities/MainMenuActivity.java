@@ -51,7 +51,12 @@ public class MainMenuActivity extends AppCompatActivity {
 
         selectedLanguage = findViewById(R.id.languageText);
 
-        selectedLanguage.setText(sharedPreferences.getString("applicationLanguage", getString(R.string.croatian_locale)));
+        if (sharedPreferences.getString("applicationLanguage", getString(R.string.croatian_locale)).equals(getString(R.string.croatian_locale))) {
+            selectedLanguage.setText(sharedPreferences.getString("applicationLanguage", getString(R.string.english_locale)));
+        } else {
+            selectedLanguage.setText(sharedPreferences.getString("applicationLanguage", getString(R.string.croatian_locale)));
+        }
+
 
         verifyPermissions();
 

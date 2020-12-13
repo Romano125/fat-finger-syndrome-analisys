@@ -31,5 +31,18 @@ public class Constants {
             Color.parseColor("#D4B82B"),
     };
 
+    public static int[] KEYBOARD_KEYS = {
+            R.id.t9_key_0,
+            R.id.t9_key_1,
+            R.id.t9_key_2,
+            R.id.t9_key_3,
+            R.id.t9_key_4,
+            R.id.t9_key_5,
+            R.id.t9_key_6,
+            R.id.t9_key_7,
+            R.id.t9_key_8,
+            R.id.t9_key_9
+    };
+
     public static String APP_BACKGROUND_COLOR = "#E4E0E0";
 }

@@ -15,7 +15,8 @@
         android:roundIcon="@mipmap/touchy_logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:targetApi="q">
+        tools:targetApi="q"
+        tools:ignore="AllowBackup">
         <activity
             android:name=".Activities.SplashActivity"
             android:screenOrientation="portrait"
@@ -37,7 +38,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".Activities.StageTwoActivity"
-            android:screenOrientation="portrait" />
+        android:screenOrientation="portrait" />
         <activity
             android:name=".Activities.SettingsActivity"
             android:screenOrientation="portrait" />

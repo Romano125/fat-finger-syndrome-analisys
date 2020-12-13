@@ -11,8 +11,8 @@
     <string name="number_seven">7</string>
     <string name="number_eight">8</string>
     <string name="number_nine">9</string>
-    <string name="btn_clear">Clear</string>
-    <string name="btn_backspace">Back</string>
+    <string name="btn_clear">C</string>
+    <string name="btn_backspace">-</string>
 
     <string name="error_message">You must do the calibration first!</string>
 
