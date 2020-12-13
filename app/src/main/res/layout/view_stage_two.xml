@@ -38,6 +38,7 @@
         android:fontFamily="@font/nunito"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="#595757"
         android:textSize="30sp"
         android:textAlignment="center"
         android:layout_marginBottom="58dp"
@@ -98,10 +99,6 @@
         </TableRow>
 
         <TableRow style="@style/keyboard_row">
-            <TextView
-                android:id="@+id/t9_key_clear"
-                style="@style/keyboard_button"
-                android:text="@string/btn_clear" />
             <TextView
                 android:id="@+id/t9_key_0"
                 style="@style/keyboard_number_button"

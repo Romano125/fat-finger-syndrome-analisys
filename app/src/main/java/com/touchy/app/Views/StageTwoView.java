@@ -3,6 +3,7 @@ package com.touchy.app.Views;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.text.Editable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -39,15 +40,15 @@ import java.util.Objects;
 import static android.content.Context.MODE_PRIVATE;
 
 public class StageTwoView extends FrameLayout implements View.OnTouchListener {
-    private TextInputEditText mPasswordField;
-    private MaterialTextView materialTextView;
+    private TextInputEditText codePhrase;
+    private MaterialTextView codePattern;
 
     private TestSubject testSubject;
     private Target target = new Target();
     private StatisticsData statisticsData = new StatisticsData();
 
     private long startTime = System.currentTimeMillis();
-    private boolean isHelpEnabled;
+    private boolean isHelpEnabled, hasError = false;
 
     private static HashMap<String, Integer> touchedAreas = new HashMap<>();
     private static HashMap<String, Double> touchedAreaAverageError = new HashMap<>();
@@ -90,21 +91,27 @@ public class StageTwoView extends FrameLayout implements View.OnTouchListener {
     }
 
     private void initViews() {
-        mPasswordField = $(R.id.password_field);
-        materialTextView = $(R.id.pattern);
+        codePhrase = $(R.id.password_field);
+        codePattern = $(R.id.pattern);
 
         for (int key : Constants.KEYBOARD_KEYS) {
             $(key).setOnTouchListener(this);
         }
 
-        $(R.id.t9_key_clear).setOnTouchListener(this);
         $(R.id.t9_key_backspace).setOnTouchListener(this);
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (event.getAction() != MotionEvent.ACTION_DOWN) {
-            return  true;
+        if (event.getAction() != MotionEvent.ACTION_DOWN || hasError) {
+            return true;
+        }
+
+        if (!codePattern.getText().subSequence(0, getInputText().length()).equals(getInputText())) {
+            codePhrase.setTextColor(Color.parseColor("#DA0323"));
+            hasError = true;
+
+            return true;
         }
 
         Touch touch = new Touch(event.getX(), event.getY());
@@ -127,7 +134,7 @@ public class StageTwoView extends FrameLayout implements View.OnTouchListener {
                 .orElse(null);
 
         if (touchedArea.equals(String.valueOf(Constants.TOUCHED_AREA.CENTER)) || (touchError < stats.getAverageError() && isHelpEnabled)) {
-            mPasswordField.append(((TextView) nearestTarget).getText());
+            codePhrase.append(((TextView) nearestTarget).getText());
             touchError = 0;
         }
 
@@ -177,35 +184,38 @@ public class StageTwoView extends FrameLayout implements View.OnTouchListener {
         }
 
         // handle number button click
-        if (v.getTag() != null && "number_button".equals(v.getTag())) {
-            mPasswordField.append(((TextView) v).getText());
+        if (v.getTag() != null && "number_button".equals(v.getTag()) && !hasError) {
+            codePhrase.append(((TextView) v).getText());
+
+            if (!codePattern.getText().subSequence(0, getInputText().length()).equals(getInputText())) {
+                codePhrase.setTextColor(Color.parseColor("#DA0323"));
+                hasError = true;
+            }
 
             checkIfPhraseIsCorrect();
 
             return true;
         }
 
-        switch (v.getId()) {
-            case R.id.t9_key_clear: {
-                mPasswordField.setText(null);
+        if (v.getId() == R.id.t9_key_backspace) {
+            Editable editable = codePhrase.getText();
+            assert editable != null;
+            int charCount = editable.length();
+            if (charCount > 0) {
+                editable.delete(charCount - 1, charCount);
             }
-            break;
-            case R.id.t9_key_backspace: {
-                Editable editable = mPasswordField.getText();
-                assert editable != null;
-                int charCount = editable.length();
-                if (charCount > 0) {
-                    editable.delete(charCount - 1, charCount);
-                }
+
+            if (codePattern.getText().subSequence(0, getInputText().length()).equals(getInputText())) {
+                codePhrase.setTextColor(Color.parseColor("#424041"));
+                hasError = false;
             }
-            break;
         }
 
         return true;
     }
 
     private void checkIfPhraseIsCorrect() {
-        if (materialTextView.getText().equals(getInputText())) {
+        if (codePattern.getText().equals(getInputText())) {
             System.out.println("Saving statistics...");
 
             statisticsData.setTouchedAreas(touchedAreas);
@@ -251,7 +261,7 @@ public class StageTwoView extends FrameLayout implements View.OnTouchListener {
     }
 
     public String getInputText() {
-        return Objects.requireNonNull(mPasswordField.getText()).toString();
+        return Objects.requireNonNull(codePhrase.getText()).toString();
     }
 
     protected <T extends View> T $(@IdRes int id) {
