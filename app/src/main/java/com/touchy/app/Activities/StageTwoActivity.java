@@ -2,13 +2,17 @@ package com.touchy.app.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textview.MaterialTextView;
+import com.touchy.app.Models.Target;
 import com.touchy.app.R;
 import com.touchy.app.Utils.ScreenHelper;
 
@@ -37,7 +41,6 @@ public class StageTwoActivity extends AppCompatActivity {
             public void onAnimationEnd(Animation animation) {
                 MaterialTextView codePattern = findViewById(R.id.pattern);
 
-                findViewById(R.id.stageTwoInstructionsText).setVisibility(View.VISIBLE);
                 codePattern.setText(randomStringGenerator(CODE_LENGTH));
                 codePattern.setVisibility(View.VISIBLE);
                 findViewById(R.id.stageTwoView).setVisibility(View.VISIBLE);
