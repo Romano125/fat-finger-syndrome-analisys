@@ -1,8 +1,5 @@
 package com.touchy.app.Activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -11,21 +8,31 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.RadioGroup;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
 
 import com.google.android.material.radiobutton.MaterialRadioButton;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.android.material.textview.MaterialTextView;
+import com.touchy.app.Constants;
 import com.touchy.app.R;
 import com.touchy.app.Utils.Common;
 import com.touchy.app.Utils.ScreenHelper;
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -33,7 +40,8 @@ public class MainMenuActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
     private String selectedHandingTechnique = "";
 
-    MaterialTextView selectedLanguage;
+    private MaterialTextView selectedLanguage;
+    private TextInputEditText subjectNameText;
 
     private static final int STORAGE_PERMISSIONS_REQUEST_CODE = 5;
     private static final String[] STORAGE_PERMISSIONS = {
@@ -50,6 +58,7 @@ public class MainMenuActivity extends AppCompatActivity {
         sharedPreferences = getApplicationContext().getSharedPreferences("calibrationSetupPreference", MODE_PRIVATE);
 
         selectedLanguage = findViewById(R.id.languageText);
+        subjectNameText = findViewById(R.id.subjectNameText);
 
         if (sharedPreferences.getString("applicationLanguage", getString(R.string.croatian_locale)).equals(getString(R.string.croatian_locale))) {
             selectedLanguage.setText(sharedPreferences.getString("applicationLanguage", getString(R.string.english_locale)));
@@ -81,7 +90,7 @@ public class MainMenuActivity extends AppCompatActivity {
         final Intent intent = new Intent(this, CalibrationActivity.class);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         TextInputLayout subjectNameLayout = findViewById(R.id.subjectNameLayout);
-        String subjectName = String.valueOf(((TextInputEditText) findViewById(R.id.subjectNameText)).getText());
+        String subjectName = String.valueOf((subjectNameText).getText());
 
         if (subjectName.equals("")) {
             subjectNameLayout.setError(getString(R.string.name_error_message));
@@ -186,6 +195,33 @@ public class MainMenuActivity extends AppCompatActivity {
 
         if (writeExternalStoragePermission != PackageManager.PERMISSION_GRANTED || readExternalStoragePermission != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, STORAGE_PERMISSIONS, STORAGE_PERMISSIONS_REQUEST_CODE);
+        }
+    }
+
+    public void sendEmail(View view) {
+        String[] recipient = {"romano.polic12@gmail.com"};
+        Intent emailIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
+        emailIntent.setType("plain/text");
+
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, recipient);
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, String.format("Fat finger syndrome test - %s", subjectNameText.getText()));
+        ArrayList<Uri> uris = new ArrayList<>();
+        uris.add(FileProvider.getUriForFile(this, this.getApplicationContext().getPackageName() + ".provider", new File(Common.createOutputDirectory("Touchy"), String.format("%s.json", Constants.CALIBRATION_LOG_FILENAME))));
+        uris.add(FileProvider.getUriForFile(this, this.getApplicationContext().getPackageName() + ".provider", new File(Common.createOutputDirectory("Touchy"), String.format("%s.csv", Constants.CALIBRATION_LOG_FILENAME))));
+        uris.add(FileProvider.getUriForFile(this, this.getApplicationContext().getPackageName() + ".provider", new File(Common.createOutputDirectory("Touchy"), String.format("%s.json", Constants.STAGE_ONE_LOG_FILENAME))));
+        uris.add(FileProvider.getUriForFile(this, this.getApplicationContext().getPackageName() + ".provider", new File(Common.createOutputDirectory("Touchy"), String.format("%s.csv", Constants.STAGE_ONE_LOG_FILENAME))));
+        uris.add(FileProvider.getUriForFile(this, this.getApplicationContext().getPackageName() + ".provider", new File(Common.createOutputDirectory("Touchy"), String.format("%s.json", Constants.STAGE_TWO_LOG_FILENAME))));
+        uris.add(FileProvider.getUriForFile(this, this.getApplicationContext().getPackageName() + ".provider", new File(Common.createOutputDirectory("Touchy"), String.format("%s.csv", Constants.STAGE_TWO_LOG_FILENAME))));
+        emailIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
+        emailIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+        try {
+            startActivity(Intent.createChooser(emailIntent, "Send mail..."));
+            finish();
+            Log.i("Finished sending email...", "");
+        } catch (android.content.ActivityNotFoundException ex) {
+            Toast.makeText(this,
+                    "There is no email client installed.", Toast.LENGTH_SHORT).show();
         }
     }
 
