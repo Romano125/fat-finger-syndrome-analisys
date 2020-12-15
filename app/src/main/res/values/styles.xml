@@ -13,11 +13,11 @@
     </style>
 
     <style name="keyboard_button">
-        <item name="android:layout_width">20dp</item>
+        <item name="android:layout_width">50dp</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_marginEnd">2dp</item>
-        <item name="android:width">20dp</item>
-        <item name="android:height">20dp</item>
+        <item name="android:width">50dp</item>
+        <item name="android:height">50dp</item>
         <item name="android:layout_gravity">center</item>
         <item name="android:clickable">true</item>
         <item name="android:focusable">true</item>

@@ -6,9 +6,11 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.text.Editable;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import androidx.annotation.IdRes;
@@ -49,6 +51,7 @@ public class StageTwoView extends FrameLayout implements View.OnTouchListener {
 
     private long startTime = System.currentTimeMillis();
     private boolean isHelpEnabled, hasError = false;
+    private int radius;
 
     private static HashMap<String, Integer> touchedAreas = new HashMap<>();
     private static HashMap<String, Double> touchedAreaAverageError = new HashMap<>();
@@ -76,7 +79,7 @@ public class StageTwoView extends FrameLayout implements View.OnTouchListener {
 
         isHelpEnabled = sharedPreferences.getBoolean("helpEnabled", false);
         int sessionLengthInTouches = sharedPreferences.getInt("sessionLengthInTouches", 10);
-        int radius = sharedPreferences.getInt("targetRadius", 50);
+        radius = sharedPreferences.getInt("targetRadius", 50);
         String screenResolution = sharedPreferences.getString("screenResolution", "-");
         String subjectName = sharedPreferences.getString("subjectName", "-");
         String subjectHandingTechnique = sharedPreferences.getString("subjectHandingTechnique", "-");
@@ -91,14 +94,21 @@ public class StageTwoView extends FrameLayout implements View.OnTouchListener {
     }
 
     private void initViews() {
+        TableRow.LayoutParams params = new TableRow.LayoutParams(radius * 2, radius * 2);
+        params.leftMargin = 5;
+
         codePhrase = $(R.id.password_field);
         codePattern = $(R.id.pattern);
 
         for (int key : Constants.KEYBOARD_KEYS) {
             $(key).setOnTouchListener(this);
+            $(key).setLayoutParams(params);
+            ((TextView) $(key)).setTextSize(radius >> 1);
         }
 
         $(R.id.t9_key_backspace).setOnTouchListener(this);
+        $(R.id.t9_key_backspace).setLayoutParams(params);
+        ((TextView) $(R.id.t9_key_backspace)).setTextSize(radius >> 1);
     }
 
     @Override
@@ -186,6 +196,19 @@ public class StageTwoView extends FrameLayout implements View.OnTouchListener {
         // handle number button click
         if (v.getTag() != null && "number_button".equals(v.getTag()) && !hasError) {
             codePhrase.append(((TextView) v).getText());
+
+            String touchedArea = String.valueOf(Constants.TOUCHED_AREA.CENTER);
+            touchedAreas.put(touchedArea, touchedAreas.containsKey(touchedArea) ? touchedAreas.get(touchedArea) + 1 : 1);
+            touchedAreaAverageError.put(touchedArea, touchedAreaAverageError.containsKey(touchedArea) ?
+                    (touchedAreaAverageError.get(touchedArea) + 0 ) / touchedAreas.get(touchedArea)
+                    : 0);
+            touchedAreaAverageSize.put(touchedArea, touchedAreaAverageSize.containsKey(touchedArea) ?
+                    (touchedAreaAverageSize.get(touchedArea) + 0 ) / touchedAreas.get(touchedArea)
+                    : 0);
+            touchedAreaAveragePressure.put(touchedArea, touchedAreaAveragePressure.containsKey(touchedArea) ?
+                    (touchedAreaAveragePressure.get(touchedArea) + 0 ) / touchedAreas.get(touchedArea)
+                    : 0);
+
 
             if (!codePattern.getText().subSequence(0, getInputText().length()).equals(getInputText())) {
                 codePhrase.setTextColor(Color.parseColor("#DA0323"));
