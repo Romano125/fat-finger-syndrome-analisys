@@ -38,7 +38,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         radioGroup.check(isHelpEnabled ? R.id.helpPositive : R.id.helpNegative);
 
-        selectedHelpOption = isHelpEnabled ? "Yes" : "No";
+        selectedHelpOption = isHelpEnabled ? getString(R.string.positive_text) : getString(R.string.negative_text);
 
         radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             MaterialRadioButton radioButton = findViewById(checkedId);
@@ -64,7 +64,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         editor.putInt("targetRadius", targetRadius);
         editor.putInt("sessionLengthInTouches", sessionLengthInTouches);
-        editor.putBoolean("helpEnabled", selectedHelpOption.equals("Yes"));
+        editor.putBoolean("helpEnabled", selectedHelpOption.equals(getString(R.string.positive_text)));
         editor.apply();
 
         startActivity(intent);
