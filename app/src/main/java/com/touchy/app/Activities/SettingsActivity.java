@@ -34,9 +34,11 @@ public class SettingsActivity extends AppCompatActivity {
 
         boolean isHelpEnabled = sharedPreferences.getBoolean("helpEnabled", false);
 
-        RadioGroup radioGroup = (RadioGroup) findViewById(R.id.helpRadioGroup);
+        RadioGroup radioGroup = findViewById(R.id.helpRadioGroup);
 
         radioGroup.check(isHelpEnabled ? R.id.helpPositive : R.id.helpNegative);
+
+        selectedHelpOption = isHelpEnabled ? "Yes" : "No";
 
         radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             MaterialRadioButton radioButton = findViewById(checkedId);
