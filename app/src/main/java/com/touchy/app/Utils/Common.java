@@ -57,8 +57,8 @@ public class Common {
         Gson gson = new Gson();
 
         int radiusPx = target.getRadius();
-        float radiusMm = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_MM, radiusPx, displayMetrics);
-        float radiusDp = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, radiusPx, displayMetrics);
+        double radiusMm = pxToMm(radiusPx, displayMetrics);
+        double radiusDp = pxToDp(radiusPx, displayMetrics);
 
         String subjectString = String.format(Locale.ENGLISH, "%s;%s;%s;%s;%d;%s;px;%d;mm;%f;dp;%f;%d;",
                 testSubject.getName(),
@@ -96,8 +96,8 @@ public class Common {
                 StatisticsData statisticsData = new StatisticsData(String.valueOf(touchedArea), touches, averageErrorPx, averageSize, averagePressure);
                 statisticsDataList.add(statisticsData);
 
-                float averageErrorMm = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_MM, (float) averageErrorPx, displayMetrics);
-                float averageErrorDp = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) averageErrorPx, displayMetrics);
+                double averageErrorMm = pxToMm(averageErrorPx, displayMetrics);
+                double averageErrorDp = pxToDp(averageErrorPx, displayMetrics);
 
                 dataString.append(touchedArea).append(";").append(touches).append(";").append("px").append(";").append(averageErrorPx).append(";").append(averageSize).append(";").append(averagePressure).append(";");
                 dataString.append(touchedArea).append(";").append(touches).append(";").append("mm").append(";").append(averageErrorMm).append(";").append(averageSize).append(";").append(averagePressure).append(";");
@@ -120,6 +120,14 @@ public class Common {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static double pxToDp(double px, DisplayMetrics displayMetrics) {
+        return px / displayMetrics.density;
+    }
+
+    public static double pxToMm(double px, DisplayMetrics displayMetrics) {
+        return px / (displayMetrics.density * 25.4f);
     }
 
     private static void writeToAFile(File file, String data, boolean append) {
