@@ -2,7 +2,9 @@ package com.touchy.app.Utils;
 
 import android.media.MediaPlayer;
 import android.os.Environment;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Display;
 
 import com.google.gson.Gson;
@@ -36,6 +38,10 @@ public class Common {
         return String.format(Locale.ENGLISH,"%d x %d", width, height);
     }
 
+    public static String getScreenDensity(DisplayMetrics metrics) {
+        return String.format(Locale.ENGLISH,"xdpi: %f ydpi: %f, density: %f, densityDpi: %d", metrics.xdpi, metrics.ydpi, metrics.density, metrics.densityDpi);
+    }
+
     public static File createOutputDirectory(String directoryName) {
         File statisticsDirectory = new File(String.format("%s/%s/%s/", Environment.getExternalStorageDirectory(), Environment.DIRECTORY_DCIM, directoryName));
 
@@ -47,15 +53,23 @@ public class Common {
         return statisticsDirectory;
     }
 
-    public static void saveStatistics(String filename, TestSubject testSubject, Target target, StatisticsData stats) {
+    public static void saveStatistics(String filename, TestSubject testSubject, Target target, StatisticsData stats, DisplayMetrics displayMetrics) {
         Gson gson = new Gson();
-        String subjectString = String.format(Locale.ENGLISH, "%s;%s;%s;%d;%s;%d;%d;",
+
+        int radiusPx = target.getRadius();
+        float radiusMm = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_MM, radiusPx, displayMetrics);
+        float radiusDp = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, radiusPx, displayMetrics);
+
+        String subjectString = String.format(Locale.ENGLISH, "%s;%s;%s;%s;%d;%s;px;%d;mm;%f;dp;%f;%d;",
                 testSubject.getName(),
                 testSubject.getHandingTechnique(),
                 testSubject.getScreenResolution(),
+                testSubject.getScreenDensity(),
                 testSubject.getSessionLengthInTouches(),
                 testSubject.getDate(),
-                target.getRadius(),
+                radiusPx,
+                radiusMm,
+                radiusDp,
                 testSubject.getTimeSpent());
 
         File sessionFilePath = new File(Common.createOutputDirectory("Touchy"), String.format("%s.json", filename));
@@ -75,14 +89,19 @@ public class Common {
             StringBuilder dataString = new StringBuilder();
             for (Constants.TOUCHED_AREA touchedArea : Constants.TOUCHED_AREA.values()) {
                 int touches = stats.getTouchedAreas().get(String.valueOf(touchedArea)) == null ? 0 : stats.getTouchedAreas().get(String.valueOf(touchedArea));
-                double averageError = stats.getTouchedAreaAverageError().get(String.valueOf(touchedArea)) == null ? 0 : stats.getTouchedAreaAverageError().get(String.valueOf(touchedArea));
+                double averageErrorPx = stats.getTouchedAreaAverageError().get(String.valueOf(touchedArea)) == null ? 0 : stats.getTouchedAreaAverageError().get(String.valueOf(touchedArea));
                 double averageSize = stats.getTouchedAreaAverageSize().get(String.valueOf(touchedArea)) == null ? 0 : stats.getTouchedAreaAverageSize().get(String.valueOf(touchedArea));
                 double averagePressure = stats.getTouchedAreaAveragePressure().get(String.valueOf(touchedArea)) == null ? 0 : stats.getTouchedAreaAveragePressure().get(String.valueOf(touchedArea));
 
-                StatisticsData statisticsData = new StatisticsData(String.valueOf(touchedArea), touches, averageError, averageSize, averagePressure);
+                StatisticsData statisticsData = new StatisticsData(String.valueOf(touchedArea), touches, averageErrorPx, averageSize, averagePressure);
                 statisticsDataList.add(statisticsData);
 
-                dataString.append(touchedArea).append(";").append(touches).append(";").append(averageError).append(";").append(averageSize).append(";").append(averagePressure).append(";");
+                float averageErrorMm = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_MM, (float) averageErrorPx, displayMetrics);
+                float averageErrorDp = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) averageErrorPx, displayMetrics);
+
+                dataString.append(touchedArea).append(";").append(touches).append(";").append("px").append(";").append(averageErrorPx).append(";").append(averageSize).append(";").append(averagePressure).append(";");
+                dataString.append(touchedArea).append(";").append(touches).append(";").append("mm").append(";").append(averageErrorMm).append(";").append(averageSize).append(";").append(averagePressure).append(";");
+                dataString.append(touchedArea).append(";").append(touches).append(";").append("dp").append(";").append(averageErrorDp).append(";").append(averageSize).append(";").append(averagePressure).append(";");
             }
 
             JSONObject sessionData = new JSONObject();
@@ -152,5 +171,28 @@ public class Common {
         File sessionFilePath = new File(createOutputDirectory("Touchy"), String.format("%s.json", Constants.CALIBRATION_LOG_FILENAME));
 
         return sessionFilePath.length() > 0;
+    }
+
+    public static List<StatisticsData> getLastCalibrationData() {
+        Gson gson = new Gson();
+
+        File sessionFilePath = new File(Common.createOutputDirectory("Touchy"), String.format("%s.json", Constants.CALIBRATION_LOG_FILENAME));
+
+        List<JSONObject> statistics;
+        List<StatisticsData> statisticsData = null;
+        if (sessionFilePath.length() > 0) {
+            try {
+                statistics = gson.fromJson(new JsonReader(new FileReader(sessionFilePath)), new TypeToken<List<JSONObject>>() {}.getType());
+
+                // reading data from file
+                String json = gson.toJson(statistics.get(statistics.size()-1).get("statistics"));
+
+                statisticsData = gson.fromJson(json, new TypeToken<List<StatisticsData>>() {}.getType());
+            } catch (FileNotFoundException | JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return statisticsData;
     }
 }

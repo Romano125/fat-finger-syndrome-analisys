@@ -81,11 +81,12 @@ public class StageTwoView extends FrameLayout implements View.OnTouchListener {
         int sessionLengthInTouches = sharedPreferences.getInt("sessionLengthInTouches", 10);
         radius = sharedPreferences.getInt("targetRadius", 50);
         String screenResolution = sharedPreferences.getString("screenResolution", "-");
+        String screenDensity = sharedPreferences.getString("screenDensity", "-");
         String subjectName = sharedPreferences.getString("subjectName", "-");
         String subjectHandingTechnique = sharedPreferences.getString("subjectHandingTechnique", "-");
 
-        lastCalibrationStatisticsData = getLastCalibrationData();
-        testSubject = new TestSubject(subjectName, subjectHandingTechnique, screenResolution, Common.getFormattedDate(), sessionLengthInTouches);
+        lastCalibrationStatisticsData = Common.getLastCalibrationData();
+        testSubject = new TestSubject(subjectName, subjectHandingTechnique, screenResolution, screenDensity, Common.getFormattedDate(), sessionLengthInTouches);
         testSubject.setHelpEnabled(isHelpEnabled);
         target.setRadius(radius);
 
@@ -120,8 +121,6 @@ public class StageTwoView extends FrameLayout implements View.OnTouchListener {
         if (!codePattern.getText().subSequence(0, getInputText().length()).equals(getInputText())) {
             codePhrase.setTextColor(Color.parseColor("#DA0323"));
             hasError = true;
-
-            return true;
         }
 
         Touch touch = new Touch(event.getX(), event.getY());
@@ -143,7 +142,7 @@ public class StageTwoView extends FrameLayout implements View.OnTouchListener {
                 .findAny()
                 .orElse(null);
 
-        if (touchedArea.equals(String.valueOf(Constants.TOUCHED_AREA.CENTER)) || (touchError < stats.getAverageError() && isHelpEnabled)) {
+        if ((touchedArea.equals(String.valueOf(Constants.TOUCHED_AREA.CENTER)) || (touchError < stats.getAverageError() && isHelpEnabled)) && !hasError) {
             codePhrase.append(((TextView) nearestTarget).getText());
             touchError = 0;
         }
@@ -248,7 +247,7 @@ public class StageTwoView extends FrameLayout implements View.OnTouchListener {
 
             testSubject.setTimeSpent((System.currentTimeMillis() - startTime) / 1000);
 
-            Common.saveStatistics(Constants.STAGE_TWO_LOG_FILENAME, testSubject, target, statisticsData);
+            Common.saveStatistics(Constants.STAGE_TWO_LOG_FILENAME, testSubject, target, statisticsData, getContext().getResources().getDisplayMetrics());
 
             touchedAreas = new HashMap<>();
             touchedAreaAverageError = new HashMap<>();
@@ -258,29 +257,6 @@ public class StageTwoView extends FrameLayout implements View.OnTouchListener {
             Intent intent = new Intent(getContext(), MainMenuActivity.class);
             getContext().startActivity(intent);
         }
-    }
-
-    private List<StatisticsData> getLastCalibrationData() {
-        Gson gson = new Gson();
-
-        File sessionFilePath = new File(Common.createOutputDirectory("Touchy"), String.format("%s.json", Constants.CALIBRATION_LOG_FILENAME));
-
-        List<JSONObject> statistics;
-        List<StatisticsData> statisticsData = null;
-        if (sessionFilePath.length() > 0) {
-            try {
-                statistics = gson.fromJson(new JsonReader(new FileReader(sessionFilePath)), new TypeToken<List<JSONObject>>() {}.getType());
-
-                // reading data from file
-                String json = gson.toJson(statistics.get(statistics.size()-1).get("statistics"));
-
-                statisticsData = gson.fromJson(json, new TypeToken<List<StatisticsData>>() {}.getType());
-            } catch (FileNotFoundException | JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return statisticsData;
     }
 
     public String getInputText() {

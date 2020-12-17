@@ -60,11 +60,12 @@ public class CalibrationView extends View {
         this.radius = sharedPreferences.getInt("targetRadius", 50);
         this.sessionLengthInTouches = sharedPreferences.getInt("sessionLengthInTouches", 10);
         String screenResolution = sharedPreferences.getString("screenResolution", "-");
+        String screenDensity = sharedPreferences.getString("screenDensity", "-");
         String subjectName = sharedPreferences.getString("subjectName", "-");
         String subjectHandingTechnique = sharedPreferences.getString("subjectHandingTechnique", "-");
         boolean isHelpEnabled = sharedPreferences.getBoolean("helpEnabled", false);
 
-        testSubject = new TestSubject(subjectName, subjectHandingTechnique, screenResolution, Common.getFormattedDate(), sessionLengthInTouches);
+        testSubject = new TestSubject(subjectName, subjectHandingTechnique, screenResolution, screenDensity, Common.getFormattedDate(), sessionLengthInTouches);
         testSubject.setHelpEnabled(isHelpEnabled);
         target.setRadius(radius);
     }
@@ -115,7 +116,7 @@ public class CalibrationView extends View {
 
             testSubject.setTimeSpent((System.currentTimeMillis() - startTime) / 1000);
 
-            Common.saveStatistics(Constants.CALIBRATION_LOG_FILENAME, testSubject, target, statisticsData);
+            Common.saveStatistics(Constants.CALIBRATION_LOG_FILENAME, testSubject, target, statisticsData, getContext().getResources().getDisplayMetrics());
 
             touchedAreas = new HashMap<>();
             touchedAreaAverageError = new HashMap<>();

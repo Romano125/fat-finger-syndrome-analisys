@@ -75,13 +75,14 @@ public class StageOneView extends View {
         this.radius = sharedPreferences.getInt("targetRadius", 50);
         this.sessionLengthInTouches = sharedPreferences.getInt("sessionLengthInTouches", 10);
         String screenResolution = sharedPreferences.getString("screenResolution", "-");
+        String screenDensity = sharedPreferences.getString("screenDensity", "-");
         String subjectName = sharedPreferences.getString("subjectName", "-");
         String subjectHandingTechnique = sharedPreferences.getString("subjectHandingTechnique", "-");
         this.isHelpEnabled = sharedPreferences.getBoolean("helpEnabled", false);
 
         mediaPlayer = MediaPlayer.create(context, R.raw.success_hit);
-        lastCalibrationStatisticsData = getLastCalibrationData();
-        testSubject = new TestSubject(subjectName, subjectHandingTechnique, screenResolution, Common.getFormattedDate(), sessionLengthInTouches);
+        lastCalibrationStatisticsData = Common.getLastCalibrationData();
+        testSubject = new TestSubject(subjectName, subjectHandingTechnique, screenResolution, screenDensity, Common.getFormattedDate(), sessionLengthInTouches);
         testSubject.setHelpEnabled(isHelpEnabled);
         target.setRadius(radius);
     }
@@ -148,7 +149,7 @@ public class StageOneView extends View {
 
                 testSubject.setTimeSpent((System.currentTimeMillis() - startTime) / 1000);
 
-                Common.saveStatistics(Constants.STAGE_ONE_LOG_FILENAME, testSubject, target, statisticsData);
+                Common.saveStatistics(Constants.STAGE_ONE_LOG_FILENAME, testSubject, target, statisticsData, getContext().getResources().getDisplayMetrics());
 
                 touchedAreas = new HashMap<>();
                 touchedAreaAverageError = new HashMap<>();
@@ -169,28 +170,5 @@ public class StageOneView extends View {
         int index = random.nextInt(Constants.TARGET_COLORS.length);
         paint.setColor(Constants.TARGET_COLORS[index]);
         invalidate();
-    }
-
-    private List<StatisticsData> getLastCalibrationData() {
-        Gson gson = new Gson();
-
-        File sessionFilePath = new File(Common.createOutputDirectory("Touchy"), String.format("%s.json", Constants.CALIBRATION_LOG_FILENAME));
-
-        List<JSONObject> statistics;
-        List<StatisticsData> statisticsData = null;
-        if (sessionFilePath.length() > 0) {
-            try {
-                statistics = gson.fromJson(new JsonReader(new FileReader(sessionFilePath)), new TypeToken<List<JSONObject>>() {}.getType());
-
-                // reading data from file
-                String json = gson.toJson(statistics.get(statistics.size()-1).get("statistics"));
-
-                statisticsData = gson.fromJson(json, new TypeToken<List<StatisticsData>>() {}.getType());
-            } catch (FileNotFoundException | JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return statisticsData;
     }
 }

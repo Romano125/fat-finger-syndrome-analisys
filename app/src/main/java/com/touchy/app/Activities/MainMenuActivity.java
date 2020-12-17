@@ -105,6 +105,7 @@ public class MainMenuActivity extends AppCompatActivity {
         editor.putString("subjectName", subjectName);
         editor.putString("subjectHandingTechnique", selectedHandingTechnique);
         editor.putString("screenResolution", Common.getScreenResolution(getWindowManager().getDefaultDisplay()));
+        editor.putString("screenDensity", Common.getScreenDensity(getResources().getDisplayMetrics()));
         editor.apply();
 
         startActivity(intent);
@@ -142,6 +143,7 @@ public class MainMenuActivity extends AppCompatActivity {
         editor.putString("subjectName", subjectName);
         editor.putString("subjectHandingTechnique", selectedHandingTechnique);
         editor.putString("screenResolution", Common.getScreenResolution(getWindowManager().getDefaultDisplay()));
+        editor.putString("screenDensity", Common.getScreenDensity(getResources().getDisplayMetrics()));
         editor.apply();
 
         startActivity(intent);
