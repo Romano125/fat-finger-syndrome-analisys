@@ -74,9 +74,19 @@ public class CalibrationView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
+        int minX = radius * 2 + 5;
+        int maxX = getWidth() - (radius * 2) - 5;
+
+        int minY = radius * 2 + 5;
+        int maxY = getHeight() - (radius * 2) - 5;
+
+        //Generate random numbers for x and y locations of the circle on screen
+        int randomX = random.nextInt(maxX - minX + 1) + minX;
+        int randomY = random.nextInt(maxY - minY + 1) + minY;
+
         canvas.drawColor(Color.parseColor(Constants.APP_BACKGROUND_COLOR));
-        target.setX((random.nextInt(Math.abs(getWidth()-radius/2)) + radius/2f));
-        target.setY((random.nextInt((int)Math.abs((getHeight()- (radius >> 1) + radius/2f)))));
+        target.setX(randomX);
+        target.setY(randomY);
 
         canvas.drawCircle(target.getX(), target.getY(), radius, paint);
     }
