@@ -130,6 +130,10 @@ public class Common {
         return px / (displayMetrics.density * 25.4f);
     }
 
+    public static float dpToPx(double dp, DisplayMetrics displayMetrics) {
+        return (float) dp * displayMetrics.density;
+    }
+
     private static void writeToAFile(File file, String data, boolean append) {
         try {
             FileWriter out = new FileWriter(file, append);

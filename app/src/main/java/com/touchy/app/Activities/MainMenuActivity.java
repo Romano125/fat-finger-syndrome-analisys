@@ -57,8 +57,14 @@ public class MainMenuActivity extends AppCompatActivity {
 
         sharedPreferences = getApplicationContext().getSharedPreferences("calibrationSetupPreference", MODE_PRIVATE);
 
+        String subjectName = sharedPreferences.getString("subjectName", "");
+
         selectedLanguage = findViewById(R.id.languageText);
         subjectNameText = findViewById(R.id.subjectNameText);
+
+        if (!subjectName.equals("")) {
+            subjectNameText.setText(subjectName);
+        }
 
         if (sharedPreferences.getString("applicationLanguage", getString(R.string.croatian_locale)).equals(getString(R.string.croatian_locale))) {
             selectedLanguage.setText(sharedPreferences.getString("applicationLanguage", getString(R.string.english_locale)));
